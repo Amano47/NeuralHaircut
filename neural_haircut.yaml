@@ -162,7 +162,7 @@ dependencies:
   - ncurses=6.4=h6a678d5_0
   - nest-asyncio=1.5.6=py39h06a4308_0
   - nettle=3.7.3=hbbd107a_1
-  - notebook=6.5.3=py39h06a4308_0
+  - notebook=6.5.* # changed notebook version constraint
   - notebook-shim=0.2.2=py39h06a4308_0
   - nsight-compute=2023.1.0.15=0
   - nspr=4.33=h295c915_0
