@@ -59,7 +59,7 @@ mkdir CASE_NAME/colmap/sparse_txt && colmap model_converter --input_path CASE_NA
 ##### To postprocess COLMAP's output run:
 
 ```bash
-python colmap_parsing.py --path_to_scene  ./implicit-hair-data/data/SCENE_TYPE/CASE --save_path ./implicit-hair-data/data/SCENE_TYPE/CASE/colmap
+python colmap_parsing.py --path_to_scene  ./implicit-hair-data/data/SCENE_TYPE/CASE/colmap --save_path ./implicit-hair-data/data/SCENE_TYPE/CASE/colmap
 ```
 ##### Obtain:
 

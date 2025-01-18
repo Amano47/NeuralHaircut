@@ -7,20 +7,25 @@ Sometimes it is not very clear in the official documentation, what you have to d
 ## Table of Contents
 
 1. [Installing](#git-repo-initialization-and-stuff)  
-	1.1 [Git and Conda](#1-clone-repo-and-create-conda-environment)  
-	1.2 [Submodules](#2-init-submodules)  
-	1.3 [npbgpp](#3-setup-npbgpp)  
+	1.1 [Git and Conda](#11-clone)  
+	1.2 [Submodules](#12-init-submodules)  
+	1.3 [npbgpp](#13-setup-npbgpp)  
 	1.4 [Pretrained models](#4-download-pretrained-neuralhaircut-models-from-google-drive)  
 
-2. [Usage](#)
+2. [Usage](#2-usage-running-the-code)  
+	2.1 [First Stage](#21-geometric-reconstruction)  
+	2.2 [Postprocess](/howto/postprocess.md#postprocess-first-stage)  
+	2.3 [Second Stage](#23-strands-optimization)  
+
+3. [Custom Data](#3-preprocess-custom-data)  
+
+4. [Troubleshoot](#4-troubleshoot)
 
 ---
 
 ## 1. Installing
 
-<details>
-
-#### 1. Clone
+#### 1.1 Clone
 
 Clone the git repository.
 
@@ -33,7 +38,7 @@ conda env create -n neuralhaircut -f neural_haircut.yaml
 conda activate neuralhaircut
 ```
 
-#### 2. Init Submodules
+#### 1.2 Init Submodules
 
 Initialize the Submodules [CDGNet](https://github.com/tjpulkl/CDGNet), [MODNet](https://github.com/ZHKKKe/MODNet), [NeuS](https://github.com/Totoro97/NeuS), [k-diffusion](https://github.com/crowsonkb/k-diffusion) and [npbgpp](https://github.com/rakhimovv/npbgpp) with:  
 
@@ -41,7 +46,7 @@ Initialize the Submodules [CDGNet](https://github.com/tjpulkl/CDGNet), [MODNet](
 git submodule update --init --recursive
 ```
 
-#### 3. setup npbgpp
+#### 1.3 setup npbgpp
 
 Run the setup code for npbgpp
 
@@ -51,7 +56,7 @@ python setup.py build develop
 cd ..
 ```
 
-#### 4. Download pretrained NeuralHaircut models from Google Drive
+#### 1.4 Download pretrained NeuralHaircut models from Google Drive
 
 Pretrained Models for the second stage are in this Google Drive, provided by the original Author of Neural Haircut.
 
@@ -61,44 +66,74 @@ If gdown doesn't work properly, you can go to this link and download it manually
 gdown --folder https://drive.google.com/drive/folders/1TCdJ0CKR3Q6LviovndOkJaKm8S1T9F_8
 ```
 
-</details>
+## 2. Usage: Running the code
+
+Assuming you have the preprocessed files and data to run the code, which is explained in the next Part [3. Preprocess](#3-preprocess-custom-data), or the [test dataset](/example/), you need to follow these steps in order to get the model of your hair.  
+
+There is also the guide for the testdata in [/example](/example/) 
+
+Note that these steps take a long time, even with powerful GPUs with high V-Memory capacity and Bandwith  
+- first stage 3~4 days  
+- second stage 6~7 days  
+
+The Code is not written for parallelisation on Nvidia GPUs, so the number of GPUs $x$ with $x > 1$ does not matter.  
+
+It is marginally faster to compute with up to 40 GB of VRAM, but 24 GB should perform around the same. 
 
 ---
 
-## 2. Usage: Executing the code
+### 2.1  Geometric Reconstruction
 
-Assuming you have the preprocessed files and data to run the code, which is explained in the next Part [3. Preprocess](#3-preprocess-custom-data), you need to follow these steps in order to obtain the 
+First we run the first stage, the [geometric reconstruction code](/run_geometry_reconstruction.py) to get a rough reconstruction of your outer hair shell geometry and bust.
 
-1. 
-
-
-
---- 
-## 3. Preprocess custom Data
-
-Now we are getting into the part, where we preprocess our photos to put them into a folder and run the thing for 6 days.
-
-To make it a bit more clear, what and why something needs to happen, you can take a look at the result we need to get to: [implicit-hair-data/](https://drive.usercontent.google.com/download?id=1CADXQfC2IgxmFLwcLrm4G3ilWpW1g_PA&authuser=0) <- this is a folder with the example data they generously gave us to look at and decipher. The data in there, combined with the example config files in the repo, are usable to do a test run (if you want to wait a week or so on a single A100-80GB).
-
-The structure is also written in the repo under [preprocess_custom_data](https://github.com/SamsungLabs/NeuralHaircut/tree/main/preprocess_custom_data) 
-
----
-#### 5. Get Pretrained Model Files from PIXIE and SMPLX (follow multiview_optimization md in repo)
-	1. create accounts on their websites (I recommend with same email and password)
-		- https://pixie.is.tue.mpg.de/
-		- https://smpl-x.is.tue.mpg.de/
-
-	2. follow the Manual on PIXIE https://github.com/yfeng95/PIXIE/blob/master/Doc/docs/getting_started.md
-
-	3. copy the following files into your repo in multiview_optimization
-		-  SMPL-X__FLAME_vertex_ids.npy 
-		-  smplx_extra_joints.yaml
-		-  SMPLX_NEUTRAL_2020.npz
-
-	4. change the path to them in `utils/config.py`
-
-```python
-12 	    cfg.pixie_dir = /path/to/dir/
+```bash
+python run_geometric_reconstruction.py --case CASE_NAME --conf ./configs/SCENE_TYPE/neural_strands.yaml --exp_name first_stage_SCENE_TYPE_CASE
 ```
 
-#### 6. PIXIE: initialization_pixie
+- You can add camera fitting with the flag `--train_cameras`  
+- It is possible to continue training from checkpoints with `--is_continue`  
+- for higher resolution mesh, add the flags `--mode_validation`
+
+
+### 2.2 Postprocess first stage
+
+Before running the second stage on your own dataset, do the following:  
+
+__[Postprocess](/howto/postprocess.md)__
+
+### 2.3 Strands Optimization
+
+After the copying is done, we can run the second stage  
+
+```bash
+python run_strands_optimization.py --case CASE --scene_type SCENE_TYPE --conf ./configs/SCENE_TYPE/neural_strands.yaml  --hair_conf ./configs/hair_strands_textured.yaml --exp_name second_stage_SCENE_TYPE_CASE
+```
+
+If you fitted the camera during the first stage, you need to change the config file to `./configs/SCENE_TYPE/neural_strands_w_camera_fitted.yaml`
+
+ 
+## 3. Preprocess custom data
+
+It takes a lot of steps to create the dataset, which you need for running the first and second stage of Neural Haircut. The exact steps are written in: 
+__[Prepare Custom Data](/howto/custom_data.md)__.  
+
+It is also helpful to see the structure of the 
+[implicit-hair-data/](https://drive.usercontent.google.com/download?id=1CADXQfC2IgxmFLwcLrm4G3ilWpW1g_PA&authuser=0) folder.  
+You may use it as a checklist.
+
+## 4. Troubleshoot
+
+I personally had issues creating custom data, so here are some of the issues I had encountered and the *tricks* I used to solved them.  
+
+Before that, I tested Neural Haircut on these specs:
+- Nvidia A100-80GB GPU  
+- AMD EPYC 7713 64-Core CPU  
+- 2038 GiB Memory  
+
+- Lightstage (for custom data)
+
+There are up- and downsides to some of the component, like the Lightstage.  
+At first glance, it seems to be good for getting consistent lighting, near perfect images with no motion blurr and consistentdata, which could be good to test some Benchmarks against other hair recreation methods, like Gaussian Splatting, etc...  
+But in reality, the number of photos you get from a Lightstage can be counted as a constraint for training and colmapping.  
+
+
