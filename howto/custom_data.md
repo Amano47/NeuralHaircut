@@ -1,25 +1,250 @@
-## Prepare Custom Data
+# 3. Prepare Custom Data
 
-#### 3.1 Get Pretrained Model Files from PIXIE and SMPLX (follow multiview_optimization md in repo)
-	1. create accounts on their websites (I recommend with same email and password)
-		- https://pixie.is.tue.mpg.de/
-		- https://smpl-x.is.tue.mpg.de/
+## ToC
 
-	2. follow the Manual on PIXIE https://github.com/yfeng95/PIXIE/blob/master/Doc/docs/getting_started.md
+[3.1 PIXIE and SMPLX](#31-get-pretrained-model-files-from-pixie-and-smplx-follow-multiview_optimization-md-in-repo)  
+[3.2 PIXIE; initialization_pixie](#32-pixie-initialization_pixie)  
+[3.3 Masks](#33-silhouette-and-hair-masks)  
+[3.4 Confidence- and Orientationmaps](#34-orientation-and-confidence-maps)  
+[3.5 COLMAP and MeshLab](#35-colmapmeshlab)  
+[3.6 scale.pickle](#36-transform-scene-into-unit-sphere)  
+[3.7 Training Views](#37-define-views-optional)  
+[3.8 FLAME Head](#38-flame-head)
 
-	3. copy the following files into your repo in multiview_optimization
-		-  SMPL-X__FLAME_vertex_ids.npy 
-		-  smplx_extra_joints.yaml
-		-  SMPLX_NEUTRAL_2020.npz
 
-	4. change the path to them in `utils/config.py`
+### 3.1 Get Pretrained Model Files from PIXIE and SMPLX (follow multiview_optimization md in repo)
+	
+1. create accounts on their websites
+	- [PIXIE](https://pixie.is.tue.mpg.de/)
+	- [SMPLX](https://smpl-x.is.tue.mpg.de/)
+
+2. follow the Manual on PIXIE https://github.com/yfeng95/PIXIE/blob/master/Doc/docsgetting_started.md  
+	- create Conda Environment  
+	- download models
+
+3. change the path to them in `src/multiview_optimization/utils/config.py`
+
+Set the path to the models to the `/data` folder in the installed PIXIE folder, you just downloaded. There are all Models for Pixie and SMPLX
 
 ```python
-12 	    cfg.pixie_dir = /path/to/dir/
+12 	    cfg.pixie_dir = /path/to/PIXIE/data/ # in PIXIE
 ```
 
-#### 3.2 PIXIE: initialization_pixie
+### 3.2 PIXIE: initialization_pixie
+
+You need to create a `.pickle` file with the [dictionary](https://github.com/yfeng95/PIXIE/blob/5c8879b828fc78e69b8d457029b27e825eae0d1c/pixielib/pixie.py#L414)
+
+```python
+verts, landmarks, joints = self.smplx(
+            shape_params=param_dict['shape'],
+            expression_params=param_dict['exp'],
+            global_pose=param_dict['global_pose'],
+            body_pose=param_dict['body_pose'],
+            jaw_pose=param_dict['jaw_pose'],
+            left_hand_pose=param_dict['left_hand_pose'],
+            right_hand_pose=param_dict['right_hand_pose'])
+```
+
+You can add a function `save_pixie_init(param_dict)`, which acts almost the same as [decode(self, param_dict, param_type)](https://github.com/yfeng95/PIXIE/blob/5c8879b828fc78e69b8d457029b27e825eae0d1c/pixielib/pixie.py#373), but instead of decoding, it saves the dictionary with  
+
+`save_init_pixie(self, param_dict, param_type, save_location)`  
+
+which you can call almost like `decode()` in the [demo/ files](/pixie/new_demo_fit_face.py)
 
 
+[new_pixie.py](/pixie/new_pixie.py#L467)  
 
-#### 3.3 Colmap (optional)
+[new_demo_fit_face.py](/pixie/new_demo_fit_face.py)
+
+__do not replace__ the old files in your installed Pixie folder, but copy the code and execute the demo file
+
+__or__
+
+__replace__ the old files, but also change the `import` to the correct file.
+
+```bash
+python demos/new_demo_fit_face.py --input_path /path/to/your/image/folder --save_folder /TestSamples/face/CASE/ --init_file_path /implicit-hair-data/data/SCENE_TYPE/CASE/initialization_pixie.pickle
+```
+
+Add the following args to get more results:  
+- `--showBody True` 
+- `--saveImages True`  
+- `--saveObj True`  
+- `--saveGif True`
+
+All the results are saved in the save folder.
+
+### 3.3 Silhouette and Hair Masks
+
+To generate silhouettes, we use [MODNet](/MODNet/) and for hair masks [CDGNet](/CDGNet/).  
+
+1. Download MODNet Model
+
+MODNet : [link to MODNet/pretrained](https://github.com/ZHKKKe/MODNet/tree/master/pretrained) | download the file `modnet_photographic_portrait_matting.ckpt`  
+__Save__ the file in `/MODNet/pretrained/` (easier for executing later) 
+
+2. Download CDGNet Model
+
+CDGNet : ~~[official link](https://github.com/tjpulkl/CDGNet/blob/9daf7ddee6045c151c90a2e300946ea5f5717591/README.md?plain=1#L22)~~ which is outdated | Download `LIP_epoch_149.pth` (~305 MB)  
+[OneDrive Link](https://onedrive.live.com/?redeem=aHR0cHM6Ly8xZHJ2Lm1zL2YvcyFBaGZRbUVIelk1NFlhMmdHYXNsWG5NMklQQ2s%5FZT1waGs1bWU&id=189E63F34198D017%21131&cid=189E63F34198D017) from [Monohair](https://github.com/KeyuWu-CS/MonoHair)    
+
+__Save__ the file in `/CDGNet/snapshots/` (create the directory)  
+
+3. Calculate Masks
+
+Execute the code with  
+
+```bash
+python preprocess_custom_data/calc_masks.py --scene_path ./implicit-hair-data/data/SCENE_TYPE/CASE/
+```
+
+If you saved the pretrained models in another directory (or on another drive), use the args  
+- `--MODNET_ckpt`
+- `--CDGNET_ckpt`
+
+You now should have the subfolders `masks/` and `hair_masks/` under `CASE/` with masks of the image and the hair.
+
+### 3.4 Orientation and Confidence Maps
+
+Calculate orientation maps and confidence maps with
+
+```bash
+python preprocess_custom_data/calc_orientation_maps.py --img_path ./implicit-hair-data/data/SCENE_TYPE/CASE/image --orient_dir ./implicit-hair-data/data/SCENE_TYPE/CASE/orientation_maps --conf_dir ./implicit-hair-data/data/SCENE_TYPE/CASE/confidence_maps
+```
+
+This should create the subdirectories `orientation_maps/` and `confidence_maps/` with the data. This also takes a while.
+
+### 3.5 Colmap/Meshlab
+
+The original document states, that this step is optional, but the files seem to be required in some stages afterwards.
+
+#### (i) COLMAP
+
+1. install Colmap
+
+Install COLMAP SfM with Conda
+
+```bash
+conda create -n colmap
+conda install colmap
+conda activate colmap
+```
+
+2. run `automatic_reconstructor`
+
+run the automatic reconstructor from the terminal with
+
+```bash
+colmap automatic_reconstructor --workspace_path ./implicit-hair-data/SCENE_TYPE/CASE/colmap --image_path ./implicit-hair-data/SCENE_TYPE/CASE/image
+```
+
+This runs automatically for ~1.5 hours (depending on image quality and quantitiy).
+
+It should run fine with normal video frames (because of the amount of data), but in case colmap can't identify camera positions and features, give colmap the masks you created earlier, by simply adding the path with: 
+
+```bash
+--mask_path ./implicit-hair-data/SCENE_TYPE/CASE/mask
+```
+
+
+3. run `model_converter`
+
+In the subdirectory of your colmap workspace `./implicit-hair-data/SCENE_TYPE/CASE/colmap/` should be `sparse/0/` where binaries are generated.  
+
+Convert the three files with  
+
+```bash
+mkdir CASE_NAME/colmap/sparse_txt 
+
+colmap model_converter --input_path CASE_NAME/colmap/sparse/0  --output_path CASE_NAME/colmap/sparse_txt --output_type TXT
+```
+
+This should convert the `.bin` to `.txt`, which is required for:
+
+4. postprocess Colmap output
+
+```bash
+python preprocess_custom_data/colmap_parsing.py --path_to_scene  ./implicit-hair-data/data/SCENE_TYPE/CASE --save_path ./implicit-hair-data/data/SCENE_TYPE/CASE/colmap
+```
+
+This generates the folder and files:  
+- `colmap/full_res_image/`  
+- `colmap/cameras.npz`  
+- `colmap/point_cloud.ply`
+
+__!__ Be sure to copy or move the file `cameras.npz` out of `colmap/` to `Case/` one above.
+
+#### (ii) MeshLab
+
+We now want to get rid of the noise from `point_cloud.ply` and define the region of interest in [MeshLab](https://github.com/cnr-isti-vclab/meshlab)  
+
+In the Testdata (`implicit-hair-data/data/monocular/person_0/`), the testperson is clearly visible as a pointcloud with next to none noise.  
+
+1. Install MeshLab and load the `.ply`.   
+2. double click on a point on the torso or face of your person to re-center the camera  
+3. use the tool `Select Vertex Clusters` and try selecting the pointcloud of interest, while not to select too many outlying points  
+4. invert your selection with Ctrl+Shift+I or `Filers > Selection > Invert Selection` and check the box `Invert Vertices`  
+5. delete the vertices  
+
+There are definitely other ways to do this, but this should reduce some of the noise from the background.
+
+Export the pointcloud as `point_cloud_cropped.ply` and save it in your `CASE/` directory.
+
+### 3.6 Transform scene into unit sphere
+
+```bash
+python preprocess_custom_data/scale_scene_into_sphere.py --case CASE --scene_type SCENE_TYPE --path_to_data ./implicit-hair-data/data/
+```
+
+This should create a file `scale.pickle` in `Case/`
+
+### 3.7 Define views (optional)
+
+Define views, on which you want to train. Save it into `views.pickle`
+
+### 3.8 FLAME head
+
+The FLAME head is gonna be a `head_prior.obj`, which you can also see in the testdata.
+
+All of the steps are done in [/src/multiview_optimization/](/src/multiview_optimization/)
+
+1. Config file
+
+Create a new config file in [confs/](/src/multiview_optimization/confs/).  
+As an example, here we call it `train_armin.conf` and `train_armin_2.conf`.
+The differences in the two config files are minor, but be sure to separate them.  
+
+Copy the content of `confs/train_person_1.conf` into `confs/train_armin.conf`and change the paths to the files accordingly to your saved location.  
+
+Do the same for `confs/train_person_1_.conf` and `confs/train_armin_2.conf`.
+
+2. Shell Script
+
+Create a new shell script in `scripts/` like `scripts/fit_armin.sh`
+
+Copy the contents of the given file `scripts/run_monocular_fitting.sh` into the newly created `scripts/fit_armin.sh` and change the config file paths to the ones you just created.
+
+<details>
+<summary> fit_armin.sh </summary>
+
+```bash
+python fit.py --conf confs/train_armin.conf --batch_size 1 --train_rotation True --save_path ./experiments/fit_armin_bs_1
+
+python fit.py --conf confs/train_armin.conf --batch_size 5 --train_rotation True --save_path  ./experiments/fit_armin_bs_5 --checkpoint_path ./experiments/fit_armin_bs_1/opt_params
+
+python fit.py --conf confs/train_armin_2.conf --batch_size 20 --train_rotation True --train_shape True --save_path  ./experiments/fit_armin_bs_20_train_rot_shape  --checkpoint_path ./experiments/fit_armin_bs_5/opt_params
+```
+
+</details>  
+
+Only the last call of `fit.py` (which trains on a batch size of 20) uses the second config file, so be careful.
+
+After obtaining the file `head_prior.obj`, move or copy it to your dataset in `./implicit-hair-data/data/SCENE_TYPE/CASE/`
+
+---
+
+## Troubleshoot 
+
+If you encounter any Problem, look into the open and closed Issues of [NeuralHaircut](https://github.com/SamsungLabs/NeuralHaircut/issues)  
+
+Some of them are also in my [Troubleshoot guide](/howto/troubleshoot.md)

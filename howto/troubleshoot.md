@@ -1,15 +1,19 @@
 # 4. Troubleshoot Guide
 
+Most of the things written here should not have come up, if you followd my [Guide](/howto/), but here are some types of errors I encountered.
+
+GL;HF
+
 ## ToC
 
-4.0 [Conda Environment](#40-conda-environment)  
-4.1 [Colmap](#41-colmap)  
-4.2 [Masks checkpoints](#42-masks-a)  
-4.3 [Masks python](#42-masks-b)  
-4.4 [Pixie (initialization)](#44-pixie)  
+4.1 [Conda Environment](#41-conda-environment)  
+4.2 [Colmap](#42-colmap)  
+4.3 [Masks checkpoints](#43-masks-a)  
+4.4 [Masks python](#44-masks-b)  
+4.5 [Pixie (initialization)](#45-pixie)  
 
 
-## 4.0 Conda environment
+## 4.1 Conda environment
 
 You may have conflicts between packages when creating the conda environment with [neural_haircut.yaml](/neural_haircut.yaml).  
 
@@ -21,7 +25,7 @@ Change in [Line 165](../neural_haircut.yaml#L165)
 ```
 
 
-## 4.1 Colmap
+## 4.2 Colmap
 
 Colmap is a optional step in the preprocessing step for custom data. But if there are not many images to extract features and to match these, then it is a rather difficult task to get usable results from colmap for the [preprocessing step](/preprocess_custom_data/readme.md#step-1-optional-run-colmap-sfm-to-obtain-cameras).  
 
@@ -50,7 +54,7 @@ You can generate the masks with [Step 2.x]() (the one after Colmap)
 
 
 
-## 4.2 Masks checkpoint
+## 4.3 Masks checkpoint
 
 The mask generator is very straight forward.  
 It uses [MODNet](/MODNet/) for silhouettes, so whole body masks and [CDGNet](/CDGNet/) for hair masks.  
@@ -68,7 +72,7 @@ Put it into `/CDGNet/snapshots/` and the code should be fine.
 
 
 
-## 4.2 Masks python code
+## 4.4 Masks python code
 
 Another issue with the mask generator is, that it seems to have problems with the code itself in [line 159](https://github.com/Amano47/NeuralHaircut/blob/1dbdd07797458e6e0000bd3a02f3092d419d1756/preprocess_custom_data/calc_masks.py#L159).
 
@@ -93,4 +97,15 @@ This is from [Issue #13](https://github.com/SamsungLabs/NeuralHaircut/issues/13)
 
 
 
-## 4.4 Pixie
+## 4.5 Pixie
+
+
+
+## 4.6 MeshLab
+
+
+## 4.7 OpenPose
+
+
+
+## 4.8 fitted_cameras.pth

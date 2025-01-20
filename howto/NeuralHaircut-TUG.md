@@ -9,12 +9,11 @@ Sometimes it is not very clear in the official documentation, what you have to d
 1. [Installing](#git-repo-initialization-and-stuff)  
 	1.1 [Git and Conda](#11-clone)  
 	1.2 [Submodules](#12-init-submodules)  
-	1.3 [npbgpp](#13-setup-npbgpp)  
-	1.4 [Pretrained models](#4-download-pretrained-neuralhaircut-models-from-google-drive)  
+	1.3 [Pretrained models](#13-download-pretrained-neuralhaircut-models-from-google-drive)  
 
 2. [Usage](#2-usage-running-the-code)  
 	2.1 [First Stage](#21-geometric-reconstruction)  
-	2.2 [Postprocess](/howto/postprocess.md#postprocess-first-stage)  
+	2.2 [Postprocess First Stage](/howto/postprocess.md#postprocess-first-stage)  
 	2.3 [Second Stage](#23-strands-optimization)  
 
 3. [Custom Data](#3-preprocess-custom-data)  
@@ -40,13 +39,15 @@ conda activate neuralhaircut
 
 #### 1.2 Init Submodules
 
+1. git
+
 Initialize the Submodules [CDGNet](https://github.com/tjpulkl/CDGNet), [MODNet](https://github.com/ZHKKKe/MODNet), [NeuS](https://github.com/Totoro97/NeuS), [k-diffusion](https://github.com/crowsonkb/k-diffusion) and [npbgpp](https://github.com/rakhimovv/npbgpp) with:  
 
 ```bash
 git submodule update --init --recursive
 ```
 
-#### 1.3 setup npbgpp
+2. npbgpp
 
 Run the setup code for npbgpp
 
@@ -56,7 +57,7 @@ python setup.py build develop
 cd ..
 ```
 
-#### 1.4 Download pretrained NeuralHaircut models from Google Drive
+#### 1.3 Download pretrained NeuralHaircut models from Google Drive
 
 Pretrained Models for the second stage are in this Google Drive, provided by the original Author of Neural Haircut.
 
@@ -65,6 +66,22 @@ If gdown doesn't work properly, you can go to this link and download it manually
 ```bash
 gdown --folder https://drive.google.com/drive/folders/1TCdJ0CKR3Q6LviovndOkJaKm8S1T9F_8
 ```
+Save the folder like:
+<details>
+<summary>Folder Structure</summary>
+
+Save the folder in the rootfolder of NeuralHaircut like
+```bash
+|-- NEURALHAIRCUT
+	|-- pretrained_models
+		|-- strand_prior
+			|-- strand_ckpt.pth
+		|-- diffusion_prior
+			|-- dif_ckpt.pth
+	|- ...
+	...
+```
+</details>
 
 ## 2. Usage: Running the code
 
