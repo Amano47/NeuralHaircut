@@ -109,3 +109,16 @@ This is from [Issue #13](https://github.com/SamsungLabs/NeuralHaircut/issues/13)
 
 
 ## 4.8 fitted_cameras.pth
+
+When you try to run `fit.py` or the script of that in `scripts/fit_person_1.sh` in Step 7 of [Multiview Optimization](/src/multiview_optimization/), you encounter the error, where there is no `fitted_cameras.pth` file in your dataset. This is a file, which you can get by running the [first stage](/run_geometry_reconstruction.py).  
+The "easiest" way to solve this problem, is by either modifying the code to make the requirement of this file optional and thus ignoring the it, or copying the code from another fork of Neuralhaircut by [ypan98](https://github.com/ypan98/NeuralHaircut/tree/main). The corrected file [fit.py from ypan98](https://github.com/ypan98/NeuralHaircut/blob/2064ff912088782fc7426d5eba1a917cabeb8dc6/src/multiview_optimization/fit.py) does add some arguments, which you can optionaly add. The main running script [reconstruct_colmap.sh](https://github.com/ypan98/NeuralHaircut/blob/main/reconstruct_colmap.sh) (which also won't work in one try), calls the modified `fit.py` code in [Line 40 to 42](https://github.com/ypan98/NeuralHaircut/blob/2064ff912088782fc7426d5eba1a917cabeb8dc6/reconstruct_colmap.sh#L40).  
+
+The script in this repository `fit_script.sh` is using the modified code, which is now named `fit_wo_fitted_cameras.py` with
+```bash
+./scripts/fit_script.sh $cuda_device_number $path_to_data_folder $output_folder $openpose_path
+```
+
+- `$cuda_device_number` : the GPU device number, like 0  
+- `$path_to_data_folder` : most likely `../../implicit-hair-data/data/monocular/CASE`, if your data folder is located in the root dir of the porject  
+- `$output_folder` : I recommend `./experiments/CASE`  
+- `$openpose_path` : the path to your openpose keypoints, most likely located in your dataset folder `../../implicit-hair-data/data/monocular/CASE/openpose_kp`
