@@ -106,6 +106,8 @@ This is from [Issue #13](https://github.com/SamsungLabs/NeuralHaircut/issues/13)
 
 ## 4.7 OpenPose
 
+One of the big Problems in OpenPose is, that the server, which provides the caffemodels, is down for long periods of time.   
+To get the 
 
 
 ## 4.8 fitted_cameras.pth
