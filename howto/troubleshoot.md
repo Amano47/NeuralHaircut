@@ -52,7 +52,7 @@ colmap automatic_reconstructor --workspace_path ./colmap/ --image_path ./image/ 
 
 You can generate the masks with [Step 2.x]() (the one after Colmap)
 
-
+There is also a difference when using the automatic reconstructor from colmap or doing it in the GUI, and using different file types, such as jpg and png.
 
 ## 4.3 Masks checkpoint
 
@@ -109,5 +109,14 @@ This is from [Issue #13](https://github.com/SamsungLabs/NeuralHaircut/issues/13)
 One of the big Problems in OpenPose is, that the server, which provides the caffemodels, is down for long periods of time.   
 To get the 
 
+## 4.8 FLAME fitting
 
-## 4.8 fitted_cameras.pth
+When fitting the flame head with 'fit.py' in [src/multiview_optimization/](/src/multiview_optimization/), there are a few issues, which have to be resolved before running the script.
+
+1. remove the path to 'fitted_cameras.pth', which results in errors if not done  
+2. clean up unused image frames from your image/, mask/ and hair_mask/ directory, which didn't get used in colmap
+
+### 4.8.1 fitted_cameras.pth
+
+
+### 4.8.2 image numbers
