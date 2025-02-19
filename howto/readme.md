@@ -20,8 +20,9 @@ Use this to get an overview of all substeps.
  [3.4 Orientation and Confidence Maps](/howto/custom_data.md#34-orientation-and-confidence-maps)  
  [3.5 COLMAP and MeshLab](/howto/custom_data.md#35-colmapmeshlab)  
  [3.6 Transform to unit Sphere](/howto/custom_data.md#36-transform-scene-into-unit-sphere)  
- [3.7 Define Views (optional)](/howto/custom_data.md#37-define-views-optional)  
- [3.8 FLAME Head](/howto/custom_data.md#38-flame-head)  
+ [3.7 OpenPose Keypoints](#37-openpose-keypoint)  
+ [3.8 Training Views](#38-define-views-optional)  
+ [3.9 FLAME Head](#39-flame-head) 
 
 ### [4. Troubleshoot](/howto/troubleshoot.md)  
  [4.1 Conda Environment](#41-conda-environment)  

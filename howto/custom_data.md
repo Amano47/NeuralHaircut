@@ -8,8 +8,9 @@
 [3.4 Confidence- and Orientationmaps](#34-orientation-and-confidence-maps)  
 [3.5 COLMAP and MeshLab](#35-colmapmeshlab)  
 [3.6 scale.pickle](#36-transform-scene-into-unit-sphere)  
-[3.7 Training Views](#37-define-views-optional)  
-[3.8 FLAME Head](#38-flame-head)
+[3.7 OpenPose Keypoints](#37-openpose-keypoint)  
+[3.8 Training Views](#38-define-views-optional)  
+[3.9 FLAME Head](#39-flame-head)
 
 
 ### 3.1 Get Pretrained Model Files from PIXIE and SMPLX (follow multiview_optimization md in repo)
@@ -200,11 +201,29 @@ python preprocess_custom_data/scale_scene_into_sphere.py --case CASE --scene_typ
 
 This should create a file `scale.pickle` in `Case/`
 
-### 3.7 Define views (optional)
+### 3.7 OpenPose Keypoint
+
+- Create a new directory in your data folder `openpose_kp`  
+
+- Download the latest release of [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose/releases)  
+
+- go throug the installation guide  
+
+    - if the models fail to download, go to [issue #1602](https://github.com/CMU-Perceptual-Computing-Lab/openpose/issues/1602#issuecomment-641653411) and download it from the GDrive  
+
+- run openpose with  
+
+```bash
+./build/examples/openpose/openpose.bin --image_dir image/ --render_pose 0 --display 0 --face --hand --write_json openpose_kp/
+```
+
+- if you use OpenPose on Windows, it should be the same, except use `.\bin\OpenPoseDemo.exe`
+
+### 3.8 Define views (optional)
 
 Define views, on which you want to train. Save it into `views.pickle`
 
-### 3.8 FLAME head
+### 3.9 FLAME head
 
 (see also original doc [multiview optimization](/src/multiview_optimization/))  
 
