@@ -8,9 +8,13 @@ GL;HF
 
 4.1 [Conda Environment](#41-conda-environment)  
 4.2 [Colmap](#42-colmap)  
-4.3 [Masks checkpoints](#43-masks-a)  
-4.4 [Masks python](#44-masks-b)  
+4.3 [Mask Models](#43-mask-models)  
+4.4 [Masks Code](#44-masks-b)  
 4.5 [Pixie (initialization)](#45-pixie)  
+4.6 [MeshLab](#46-meshlab)  
+4.7 [OpenPose](#47-openpose)  
+4.8 [FLAME fitting](#48-flame-fitting)
+4.8.1
 
 
 ## 4.1 Conda environment
@@ -54,7 +58,7 @@ You can generate the masks with [Step 2.x]() (the one after Colmap)
 
 There is also a difference when using the automatic reconstructor from colmap or doing it in the GUI, and using different file types, such as jpg and png.
 
-## 4.3 Masks checkpoint
+## 4.3 Mask Models
 
 The mask generator is very straight forward.  
 It uses [MODNet](/MODNet/) for silhouettes, so whole body masks and [CDGNet](/CDGNet/) for hair masks.  
@@ -99,25 +103,47 @@ This is from [Issue #13](https://github.com/SamsungLabs/NeuralHaircut/issues/13)
 
 ## 4.5 Pixie
 
+If you have troubles with creating an account for PIXIE and SMPLX, then refer to the according repositories, as the installation is documented there.  
+
 
 
 ## 4.6 MeshLab
 
+In Step 4 of preparing your own custom data, it is required to install MeshLab and cleaning up the point cloud created by Colmap SfM.  
+
+You may use a device, where you have access to a GUI and install MeshLab on it.  
+[MeshLab Download page](https://www.meshlab.net/#download)  
+
+Import your point cloud (point_cloud.ply, created by the colmap parser code) and use the various selection tools to select the unwanted vertices and delete them.  
+
+The Support Page has some Tutorials for how to use MeshLab: [here](https://www.meshlab.net/#support)  
 
 ## 4.7 OpenPose
 
-One of the big Problems in OpenPose is, that the server, which provides the caffemodels, is down for long periods of time.   
-To get the 
+- For fitting the FLAME model, you should get OpenPose keypoints or FaceAlignment Keypoints and save them as json files in a subfolder `openpose_kp`
+- There should be one json file for each image you use   
+
+- Download [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose/releases)  
+	- there is an Option for non CUDA machines  
+
+### Models not downloading
+
+- get the `.caffeemodel` file from this Google Drive as mentioned in [Issue #1602](https://github.com/CMU-Perceptual-Computing-Lab/openpose/issues/1602#issuecomment-641653411)  
+- put each model file into the directory with the same name in `/openpose/models/`  
 
 ## 4.8 FLAME fitting
 
-When fitting the flame head with 'fit.py' in [src/multiview_optimization/](/src/multiview_optimization/), there are a few issues, which have to be resolved before running the script.
+If you encounter errors with when fitting the FLAME head with `fit.py`, then there should be two types of errors:  
 
-1. remove the path to 'fitted_cameras.pth', which results in errors if not done  
-2. clean up unused image frames from your image/, mask/ and hair_mask/ directory, which didn't get used in colmap
+1. the paths in the configs are wrong  
+=> refer to [4.8.1](#481-file-path-error)
 
-### 4.8.1 fitted_cameras.pth
+2. the number of colmapped and original images are not the same  
+=> refer to [4.8.2](#482-image-numbers)
 
+### 4.8.1 file path error
+
+The `fit.py` code assumes, that you have every file in
 
 ### 4.8.2 image numbers
 
@@ -133,3 +159,8 @@ The script in this repository `fit_script.sh` is using the modified code, which 
 - `$path_to_data_folder` : most likely `../../implicit-hair-data/data/monocular/CASE`, if your data folder is located in the root dir of the porject  
 - `$output_folder` : I recommend `./experiments/CASE`  
 - `$openpose_path` : the path to your openpose keypoints, most likely located in your dataset folder `../../implicit-hair-data/data/monocular/CASE/openpose_kp`
+
+## 4.9 Geometric Reconstruction
+
+There are rather strage occurences when training the geometric reconstructor.  
+If you have problems with NaN occuring in the orientation_fine Loss calculation, like when the raygenerator creates NaN in data, then the dataset was not good.

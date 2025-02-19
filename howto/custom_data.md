@@ -32,6 +32,8 @@ Set the path to the models to the `/data` folder in the installed PIXIE folder, 
 
 ### 3.2 PIXIE: initialization_pixie
 
+A simple solution is written by User [@ypan98](https://github.com/ypan98) in his fork of PIXIE, called [pixie_initialization.py](https://github.com/ypan98/PIXIE/blob/master/demos/pixie_initialization.py). It essentially does the same as the following:
+
 You need to create a `.pickle` file with the [dictionary](https://github.com/yfeng95/PIXIE/blob/5c8879b828fc78e69b8d457029b27e825eae0d1c/pixielib/pixie.py#L414)
 
 ```python
@@ -80,19 +82,19 @@ To generate silhouettes, we use [MODNet](/MODNet/) and for hair masks [CDGNet](/
 
 1. Download MODNet Model
 
-MODNet : [link to MODNet/pretrained](https://github.com/ZHKKKe/MODNet/tree/master/pretrained) | download the file `modnet_photographic_portrait_matting.ckpt`  
-__Save__ the file in `/MODNet/pretrained/` (easier for executing later) 
+    MODNet : [link to MODNet/pretrained](https://github.com/ZHKKKe/MODNet/tree/master/pretrained) | download the file `modnet_photographic_portrait_matting.ckpt`  
+    __Save__ the file in `/MODNet/pretrained/` (easier for executing later) 
 
 2. Download CDGNet Model
 
-CDGNet : ~~[official link](https://github.com/tjpulkl/CDGNet/blob/9daf7ddee6045c151c90a2e300946ea5f5717591/README.md?plain=1#L22)~~ which is outdated | Download `LIP_epoch_149.pth` (~305 MB)  
-[OneDrive Link](https://onedrive.live.com/?redeem=aHR0cHM6Ly8xZHJ2Lm1zL2YvcyFBaGZRbUVIelk1NFlhMmdHYXNsWG5NMklQQ2s%5FZT1waGs1bWU&id=189E63F34198D017%21131&cid=189E63F34198D017) from [Monohair](https://github.com/KeyuWu-CS/MonoHair)    
+    CDGNet : ~~[official link](https://github.com/tjpulkl/CDGNet/blob/9daf7ddee6045c151c90a2e300946ea5f5717591/README.md?plain=1#L22)~~ which is **outdated** | Download `LIP_epoch_149.pth` (the file has to be ~305 MB in size)  
+    **[OneDrive Link](https://onedrive.live.com/?redeem=aHR0cHM6Ly8xZHJ2Lm1zL2YvcyFBaGZRbUVIelk1NFlhMmdHYXNsWG5NMklQQ2s%5FZT1waGs1bWU&id=189E63F34198D017%21131&cid=189E63F34198D017)** from [Monohair](https://github.com/KeyuWu-CS/MonoHair)    
 
-__Save__ the file in `/CDGNet/snapshots/` (create the directory)  
+    __Save__ the file in `/CDGNet/snapshots/` (create the directory)  
 
 3. Calculate Masks
 
-Execute the code with  
+    Execute the code with  
 
 ```bash
 python preprocess_custom_data/calc_masks.py --scene_path ./implicit-hair-data/data/SCENE_TYPE/CASE/
@@ -122,7 +124,7 @@ The original document states, that this step is optional, but the files seem to 
 
 1. install Colmap
 
-Install COLMAP SfM with Conda
+    Install COLMAP SfM with Conda
 
 ```bash
 conda create -n colmap
@@ -132,15 +134,15 @@ conda activate colmap
 
 2. run `automatic_reconstructor`
 
-run the automatic reconstructor from the terminal with
+    run the automatic reconstructor from the terminal with
 
 ```bash
 colmap automatic_reconstructor --workspace_path ./implicit-hair-data/SCENE_TYPE/CASE/colmap --image_path ./implicit-hair-data/SCENE_TYPE/CASE/image
 ```
 
-This runs automatically for ~1.5 hours (depending on image quality and quantitiy).
+This runs for ~1.5 hours (depending on image quality and quantitiy).
 
-It should run fine with normal video frames (because of the amount of data), but in case colmap can't identify camera positions and features, give colmap the masks you created earlier, by simply adding the path with: 
+It should run fine with normal video frames, but in case colmap can't identify camera positions and features, give colmap the masks you created earlier, by simply adding the path with: 
 
 ```bash
 --mask_path ./implicit-hair-data/SCENE_TYPE/CASE/mask
@@ -149,7 +151,7 @@ It should run fine with normal video frames (because of the amount of data), but
 
 3. run `model_converter`
 
-In the subdirectory of your colmap workspace `./implicit-hair-data/SCENE_TYPE/CASE/colmap/` should be `sparse/0/` where binaries are generated.  
+    In the subdirectory of your colmap workspace `./implicit-hair-data/SCENE_TYPE/CASE/colmap/` should be `sparse/0/` where binaries are generated.  
 
 Convert the three files with  
 
@@ -252,4 +254,4 @@ If you encounter any Problem, look into the open and closed Issues of [NeuralHai
 
 Some of them are also in my [Troubleshoot guide](/howto/troubleshoot.md)
 
-## [Back to Overview](/howto/)
+### [Back to Overview](/howto/)

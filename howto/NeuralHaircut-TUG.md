@@ -96,7 +96,7 @@ _BUT_: a Nvidia A100 Tensor Core GPU (40 or 80GB VRAM) takes **three times longe
 
 ### 2.1  Geometric Reconstruction
 
-First we run the first stage, the [geometric reconstruction code](/run_geometry_reconstruction.py) to get a rough reconstruction of your outer hair shell geometry and bust.
+First we run the first stage to get a rough reconstruction of your outer hair shell geometry and bust.
 
 ```bash
 python run_geometric_reconstruction.py --case CASE_NAME --conf ./configs/SCENE_TYPE/neural_strands.yaml --exp_name first_stage_SCENE_TYPE_CASE
@@ -113,6 +113,8 @@ Before running the second stage on your own dataset, do the following:
 
 __[Postprocess](/howto/postprocess.md)__
 
+Be sure to do these steps, before running the strand optimizer.
+
 ### 2.3 Strands Optimization
 
 After the copying is done, we can run the second stage  
@@ -123,6 +125,16 @@ python run_strands_optimization.py --case CASE --scene_type SCENE_TYPE --conf ./
 
 If you fitted the camera during the first stage, you need to change the config file to `./configs/SCENE_TYPE/neural_strands_w_camera_fitted.yaml`
 
+### 2.4 Results
+
+The result of the second stage is a `.ply` in your experiment save folder.  
+It contains a pointcloud with colored/grouped points, which you can make into strands with `open3d.geometry.LineSet`, for which you would need to import open3d-python  
+
+```bash
+python scripts/points2strands.py --input hair_300000.ply --output .
+```
+
+It should connect the sturctured points into sets of lines, although the strand coluors are lost.
  
 ## 3. Preprocess custom data
 
@@ -147,29 +159,4 @@ It is also helpful to see the structure of the
 
 **[4 Troubleshoot Guide](/howto/troubleshoot.md)**
 
-The documents given by the authors of NeuralHaircut were sufficient enough to recreate the test data, also given by the authors, although there were some minor difficulties.  
-The documentation for creating custom monocular data are only enough to actually creating the dataset, by reading issues from numerous forks, including the main one.  
-
-This 'troubleshoot' guide, as I call it, is written in hopes to make the life of other computergraphic students a bit easier in terms of getting the code running on own data.  
-
-
-One advice, I would give in advance is, to get a decent GPU to recreate the original authors results.  
-The latest and greates Consumer GPU, which supports CUDA, pytorch3D, ..., is recommended rather than a Workstation AI card, as the core count is what matters in the case of NeuralHaircut.  
-Computing Time is reduced by a third when using a 4090 (24GB VRAM) as when using a NVIDIA A100 (80GB VRAM). For the first stage of this code, it should take about one full day of computing on a NVIDIA 4090 according to the author. On a A100, it takes 3 full days to compute the first stage and 6 days for the second stage.  
-
-
-
-<!-- I personally had issues creating custom data, so here are some of the issues I had encountered and the *tricks* I used to solved them.  
-
-Before that, I tested Neural Haircut on these specs:
-- Nvidia A100-80GB GPU  
-- AMD EPYC 7713 64-Core CPU  
-- 2038 GiB Memory  
-
-- Lightstage (for custom data)
-
-There are up- and downsides to some of the component, like the Lightstage.  
-At first glance, it seems to be good for getting consistent lighting, near perfect images with no motion blurr and consistentdata, which could be good to test some Benchmarks against other hair recreation methods, like Gaussian Splatting, etc...  
-But in reality, the number of photos you get from a Lightstage can be counted as a constraint for training and colmapping.   -->
-
-
+Think of it like the issue-board, but in clean.

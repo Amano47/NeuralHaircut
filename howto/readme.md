@@ -23,4 +23,9 @@ Use this to get an overview of all substeps.
  [3.7 Define Views (optional)](/howto/custom_data.md#37-define-views-optional)  
  [3.8 FLAME Head](/howto/custom_data.md#38-flame-head)  
 
-### [4. Troubleshoot](/howto/troubleshoot.md)
+### [4. Troubleshoot](/howto/troubleshoot.md)  
+ [4.1 Conda Environment](#41-conda-environment)  
+ [4.2 Colmap](#42-colmap)  
+ [4.3 Mask Models](#43-mask-models)  
+ [4.4 Masks Code](#44-masks-b)  
+ [4.5 Pixie (initialization)](#45-pixie)  
