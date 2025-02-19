@@ -4,8 +4,14 @@ For more information please follow [PIXIE installation](https://github.com/yfeng
 
 For multiview optimization you need to have the following files ```SMPL-X__FLAME_vertex_ids.npy, smplx_extra_joints.yaml, SMPLX_NEUTRAL_2020.npz``` and change a path to them in ```./utils/config.py```
 
+---
 
 Note, that you need to obtain  [PIXIE initialization](https://github.com/yfeng95/PIXIE) for shape, pose parameters and save it as a dict in ```initialization_pixie``` file (see the structure in [example scene](../../example) for convenience). 
+
+**Note**
+Further details on how to get the file: see [the other guide](/howto/custom_data.md#32-pixie-initialization_pixie)  
+
+---
 
 Furthermore, use [OpenPose](https://github.com/CMU-Perceptual-Computing-Lab/openpose) to obtain 3d keypoints or use only [FaceAlignment](https://github.com/1adrianb/face-alignment) loss in optimization process.
 

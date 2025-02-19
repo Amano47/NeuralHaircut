@@ -33,40 +33,14 @@ Set the path to the models to the `/data` folder in the installed PIXIE folder, 
 
 ### 3.2 PIXIE: initialization_pixie
 
-A simple solution is written by User [@ypan98](https://github.com/ypan98) in his fork of PIXIE, called [pixie_initialization.py](https://github.com/ypan98/PIXIE/blob/master/demos/pixie_initialization.py). It essentially does the same as the following:
+A **simple solution** is implemented by User [@ypan98](https://github.com/ypan98) in his fork of PIXIE, called [pixie_initialization.py](https://github.com/ypan98/PIXIE/blob/master/demos/pixie_initialization.py).
 
-You need to create a `.pickle` file with the [dictionary](https://github.com/yfeng95/PIXIE/blob/5c8879b828fc78e69b8d457029b27e825eae0d1c/pixielib/pixie.py#L414)
+- go to his fork and download the file  
 
-```python
-verts, landmarks, joints = self.smplx(
-            shape_params=param_dict['shape'],
-            expression_params=param_dict['exp'],
-            global_pose=param_dict['global_pose'],
-            body_pose=param_dict['body_pose'],
-            jaw_pose=param_dict['jaw_pose'],
-            left_hand_pose=param_dict['left_hand_pose'],
-            right_hand_pose=param_dict['right_hand_pose'])
-```
-
-You can add a function `save_pixie_init(param_dict)`, which acts almost the same as [decode(self, param_dict, param_type)](https://github.com/yfeng95/PIXIE/blob/5c8879b828fc78e69b8d457029b27e825eae0d1c/pixielib/pixie.py#373), but instead of decoding, it saves the dictionary with  
-
-`save_init_pixie(self, param_dict, param_type, save_location)`  
-
-which you can call almost like `decode()` in the [demo/ files](/pixie/new_demo_fit_face.py)
-
-
-[new_pixie.py](/pixie/new_pixie.py#L467)  
-
-[new_demo_fit_face.py](/pixie/new_demo_fit_face.py)
-
-__do not replace__ the old files in your installed Pixie folder, but copy the code and execute the demo file
-
-__or__
-
-__replace__ the old files, but also change the `import` to the correct file.
+run it with:
 
 ```bash
-python demos/new_demo_fit_face.py --input_path /path/to/your/image/folder --save_folder /TestSamples/face/CASE/ --init_file_path /implicit-hair-data/data/SCENE_TYPE/CASE/initialization_pixie.pickle
+python demos/pixie_initialization.py --input_path /path/to/your/image/folder --save_folder /TestSamples/face/CASE/
 ```
 
 Add the following args to get more results:  

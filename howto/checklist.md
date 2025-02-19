@@ -10,10 +10,12 @@
                     |-- cameras.npz
                     |-- point_cloud.ply
                     |-- database.db
-                    |-- sparse
-                    |-- dense
-                    |-- sparse_txt
-
+                    |-- sparse/
+                        |-- 0/
+                        |-- project.ini
+                    |-- dense/
+                        |-- ...
+                    |-- sparse_txt/
                 |-- cameras.npz    # camera parameters
                 |-- image
                 |-- mask
@@ -31,5 +33,69 @@
                 |-- fitted_cameras.pth # Checkpoint for fitted cameras (optional)
 
 ```
+# Todo
 
- 
+## Preprocess
+
+1. create directories  
+    - implicit-hair-data/data/monocular/CASE/  
+    - implicit-hair-data/data/monocular/CASE/image  
+    - implicit-hair-data/data/monocular/CASE/colmap  
+    - implicit-hair-data/data/monocular/CASE/colmap/sparse_txt
+
+2. make masks  
+    - `python calc_masks.py --input implicit-hair-data/data/monocular/CASE/`
+
+3. colmap reconstruct  
+    - `colmap automatic_reconstructor --workspace_path colmap/ --image_path image/ --mask_path mask/`  
+
+4. run colmap_parser  
+    - `colmap_parsing.py --input implicit-hair-data/data/monocular/CASE/ --output implicit-hair-data/data/monocular/CASE/`  
+
+5. crop pointcloud  
+
+6. scale into sphere  
+    - `python scale_scene_into_sphere.py --input implicit-hair-data/data/monocular/CASE/`  
+
+7. calculate orientation and confidence maps  
+
+
+8. get initialization_pixie  
+
+
+9. get OpenPose Keypoints  
+
+
+10. fit FLAME head  
+
+
+## first stage
+
+11. run geometric reconstruction  
+
+
+## Interprocess
+
+12. copy checkpoints  
+
+
+13. Extract visible hair surface from sdf  
+
+
+14. Remesh hair_outer.ply to ~10k vertex for acceleration  
+
+
+15. Extract scalp region for diffusion using the distance between hair sdf to scalp  
+
+
+## second stage
+
+16. run strands optimization
+
+
+## Postprocess
+
+17. make strands from pointcloud
+
+
+# Done
