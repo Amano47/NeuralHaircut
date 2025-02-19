@@ -204,42 +204,45 @@ Define views, on which you want to train. Save it into `views.pickle`
 
 ### 3.8 FLAME head
 
-The FLAME head is gonna be a `head_prior.obj`, which you can also see in the testdata.
+(see also original doc [multiview optimization](/src/multiview_optimization/))  
 
-All of the steps are done in [/src/multiview_optimization/](/src/multiview_optimization/)
+The FLAME head is gonna be a `head_prior.obj`, which you can also see in the testdata.
 
 1. Config file
 
-Create a new config file in [confs/](/src/multiview_optimization/confs/).  
-As an example, here we call it `train_armin.conf` and `train_armin_2.conf`.
-The differences in the two config files are minor, but be sure to separate them.  
-
-Copy the content of `confs/train_person_1.conf` into `confs/train_armin.conf`and change the paths to the files accordingly to your saved location.  
-
-Do the same for `confs/train_person_1_.conf` and `confs/train_armin_2.conf`.
+- Create two new config files in [confs/](/src/multiview_optimization/confs/).  
+- Copy the content of `confs/train_person_1.conf` into `confs/train_own_data_5.conf`  
+- change the paths to the data accordingly to your own data    
+- Do the same for `confs/train_person_1_.conf` and `confs/train_own_data_20.conf`.
 
 2. Shell Script
 
-Create a new shell script in `scripts/` like `scripts/fit_armin.sh`
+- Create a new shell script in `scripts/`  
+- Copy the contents of the given file `scripts/run_monocular_fitting.sh` into the new file and change the config file paths to your own data.
 
-Copy the contents of the given file `scripts/run_monocular_fitting.sh` into the newly created `scripts/fit_armin.sh` and change the config file paths to the ones you just created.
+    <details>
+    <summary> fit_armin.sh </summary>
 
-<details>
-<summary> fit_armin.sh </summary>
+    ```bash
+    python fit.py --conf confs/train_armin.conf --batch_size 1 --train_rotation True    --save_path ./experiments/fit_armin_bs_1
 
-```bash
-python fit.py --conf confs/train_armin.conf --batch_size 1 --train_rotation True --save_path ./experiments/fit_armin_bs_1
+    python fit.py --conf confs/train_armin.conf --batch_size 5 --train_rotation True    --save_path  ./experiments/fit_armin_bs_5 --checkpoint_path ./experiments/fit_armin_bs_1/  opt_params
 
-python fit.py --conf confs/train_armin.conf --batch_size 5 --train_rotation True --save_path  ./experiments/fit_armin_bs_5 --checkpoint_path ./experiments/fit_armin_bs_1/opt_params
+    python fit.py --conf confs/train_armin_2.conf --batch_size 20 --train_rotation True     --train_shape True --save_path  ./experiments/fit_armin_bs_20_train_rot_shape   --checkpoint_path ./experiments/fit_armin_bs_5/opt_params
+    ```
 
-python fit.py --conf confs/train_armin_2.conf --batch_size 20 --train_rotation True --train_shape True --save_path  ./experiments/fit_armin_bs_20_train_rot_shape  --checkpoint_path ./experiments/fit_armin_bs_5/opt_params
-```
+    </details>  
+<br> 
 
-</details>  
+- Only the last call of `fit.py` (which trains on a batch size of 20) uses the second config file, so be sure to match that
 
-Only the last call of `fit.py` (which trains on a batch size of 20) uses the second config file, so be careful.
+3. run your script
 
-After obtaining the file `head_prior.obj`, move or copy it to your dataset in `./implicit-hair-data/data/SCENE_TYPE/CASE/`
+4. get FLAME mesh  
+- after the script has finished, go to  
+`experiments/fit_own_data/fit_own_data_bs_20_train_rot_shape/mesh/`  
+- look for the last created mesh and rename it to `head_prior.obj`  
+- copy it to your dataset 
 
 ---
 
@@ -248,3 +251,5 @@ After obtaining the file `head_prior.obj`, move or copy it to your dataset in `.
 If you encounter any Problem, look into the open and closed Issues of [NeuralHaircut](https://github.com/SamsungLabs/NeuralHaircut/issues)  
 
 Some of them are also in my [Troubleshoot guide](/howto/troubleshoot.md)
+
+## [Back to Overview](/howto/)

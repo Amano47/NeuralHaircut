@@ -127,3 +127,15 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
+# NH models
+pretrained_models/
+# dataset
+implicit-hair-data/
+implicit-hair-data.zip
+# results
+exps_first_stage/
+exps_second_stage/
+# flame fit results
+src/multiview_optimization/experiments/

@@ -1,14 +1,13 @@
 # Neural Haircut: Step by step Guide
 
-This is a step by step guide to use Neural Haircut with your own data.  
-Sometimes it is not very clear in the official documentation, what you have to do specifically at that point and they just say: go read the entire repo or something. idk
+This is a step by step guide to reconstruct Hair with your own data.  
 
 
 ## Table of Contents
 
 1. [Installing](#git-repo-initialization-and-stuff)  
-	1.1 [Git and Conda](#11-clone)  
-	1.2 [Submodules](#12-init-submodules)  
+	1.1 [Setup](#11-setup)  
+	1.2 [Submodules](#12-initialize-submodules)  
 	1.3 [Pretrained models](#13-download-pretrained-neuralhaircut-models-from-google-drive)  
 
 2. [Usage](#2-usage-running-the-code)  
@@ -24,11 +23,9 @@ Sometimes it is not very clear in the official documentation, what you have to d
 
 ## 1. Installing
 
-#### 1.1 Clone
+#### 1.1 Setup
 
-Clone the git repository.
-
-Create a new Conda environment with the given [requirements](neural_haircut.yaml) file.
+Clone the git repository and create a new Conda environment with the given [requirements](neural_haircut.yaml) file:
 
 ```bash
 git clone https://github.com/Amano47/NeuralHaircut.git
@@ -37,17 +34,13 @@ conda env create -n neuralhaircut -f neural_haircut.yaml
 conda activate neuralhaircut
 ```
 
-#### 1.2 Init Submodules
-
-1. git
+#### 1.2 initialize Submodules
 
 Initialize the Submodules [CDGNet](https://github.com/tjpulkl/CDGNet), [MODNet](https://github.com/ZHKKKe/MODNet), [NeuS](https://github.com/Totoro97/NeuS), [k-diffusion](https://github.com/crowsonkb/k-diffusion) and [npbgpp](https://github.com/rakhimovv/npbgpp) with:  
 
 ```bash
 git submodule update --init --recursive
 ```
-
-2. npbgpp
 
 Run the setup code for npbgpp
 
@@ -73,6 +66,7 @@ Save the folder like:
 Save the folder in the rootfolder of NeuralHaircut like
 ```bash
 |-- NEURALHAIRCUT
+	|-- docs
 	|-- pretrained_models
 		|-- strand_prior
 			|-- strand_ckpt.pth
@@ -85,19 +79,20 @@ Save the folder in the rootfolder of NeuralHaircut like
 
 ## 2. Usage: Running the code
 
-Assuming you have the preprocessed files and data to run the code, which is explained in the next Part [3. Preprocess](#3-preprocess-custom-data), or the [test dataset](/example/), you need to follow these steps in order to get the model of your hair.  
+**Prequisites:**
+- testdata explained in [/example](/example/)   
+or    
+- [custom data](#3-preprocess-custom-data)  
+or  
+- h3ds data  
 
-There is also the guide for the testdata in [/example](/example/) 
+**Caution:**
+- geometric reconstruction (first stage) takes 1 day on a Nvidia 4090  
+- strands reconstruction (second stage) takes 2 or more days on a Nvidia 4090  
+_BUT_: a Nvidia A100 Tensor Core GPU (40 or 80GB VRAM) takes **three times longer** than on a 4090 (24GB VRAM)  
+- the code can utilize one GPU at a time  
 
-Note that these steps take a long time, even with powerful GPUs with high V-Memory capacity and Bandwith  
-- first stage 3~4 days  
-- second stage 6~7 days  
 
-The Code is not written for parallelisation on Nvidia GPUs, so the number of GPUs $x$ with $x > 1$ does not matter.  
-
-It is marginally faster to compute with up to 40 GB of VRAM, but 24 GB should perform around the same. 
-
----
 
 ### 2.1  Geometric Reconstruction
 
@@ -136,11 +131,35 @@ __[Prepare Custom Data](/howto/custom_data.md)__.
 
 It is also helpful to see the structure of the 
 [implicit-hair-data/](https://drive.usercontent.google.com/download?id=1CADXQfC2IgxmFLwcLrm4G3ilWpW1g_PA&authuser=0) folder.  
-You may use it as a checklist.
+
+**Overview**
+1. get masks  
+2. colmap
+3. crop the pointcloud  
+4. scale into sphere  
+5. get orientation and confidence maps  
+6. get pixie file  
+7. get openpose keypoints  
+8. fit FLAME head  
+
 
 ## 4. Troubleshoot
 
-I personally had issues creating custom data, so here are some of the issues I had encountered and the *tricks* I used to solved them.  
+**[4 Troubleshoot Guide](/howto/troubleshoot.md)**
+
+The documents given by the authors of NeuralHaircut were sufficient enough to recreate the test data, also given by the authors, although there were some minor difficulties.  
+The documentation for creating custom monocular data are only enough to actually creating the dataset, by reading issues from numerous forks, including the main one.  
+
+This 'troubleshoot' guide, as I call it, is written in hopes to make the life of other computergraphic students a bit easier in terms of getting the code running on own data.  
+
+
+One advice, I would give in advance is, to get a decent GPU to recreate the original authors results.  
+The latest and greates Consumer GPU, which supports CUDA, pytorch3D, ..., is recommended rather than a Workstation AI card, as the core count is what matters in the case of NeuralHaircut.  
+Computing Time is reduced by a third when using a 4090 (24GB VRAM) as when using a NVIDIA A100 (80GB VRAM). For the first stage of this code, it should take about one full day of computing on a NVIDIA 4090 according to the author. On a A100, it takes 3 full days to compute the first stage and 6 days for the second stage.  
+
+
+
+<!-- I personally had issues creating custom data, so here are some of the issues I had encountered and the *tricks* I used to solved them.  
 
 Before that, I tested Neural Haircut on these specs:
 - Nvidia A100-80GB GPU  
@@ -151,6 +170,6 @@ Before that, I tested Neural Haircut on these specs:
 
 There are up- and downsides to some of the component, like the Lightstage.  
 At first glance, it seems to be good for getting consistent lighting, near perfect images with no motion blurr and consistentdata, which could be good to test some Benchmarks against other hair recreation methods, like Gaussian Splatting, etc...  
-But in reality, the number of photos you get from a Lightstage can be counted as a constraint for training and colmapping.  
+But in reality, the number of photos you get from a Lightstage can be counted as a constraint for training and colmapping.   -->
 
 
