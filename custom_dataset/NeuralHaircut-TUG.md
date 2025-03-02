@@ -12,7 +12,7 @@ This is a step by step guide to reconstruct Hair with your own data.
 
 2. [Usage](#2-usage-running-the-code)  
 	2.1 [First Stage](#21-geometric-reconstruction)  
-	2.2 [Postprocess First Stage](/howto/postprocess.md#postprocess-first-stage)  
+	2.2 [Postprocess First Stage](/custom_dataset/postprocess.md#postprocess-first-stage)  
 	2.3 [Second Stage](#23-strands-optimization)  
 
 3. [Custom Data](#3-preprocess-custom-data)  
@@ -111,7 +111,7 @@ python run_geometric_reconstruction.py --case CASE_NAME --conf ./configs/SCENE_T
 
 Before running the second stage on your own dataset, do the following:  
 
-__[Postprocess](/howto/postprocess.md)__
+__[Postprocess](/custom_dataset/postprocess.md)__
 
 Be sure to do these steps, before running the strand optimizer.
 
@@ -139,7 +139,7 @@ It should connect the sturctured points into sets of lines, although the strand 
 ## 3. Preprocess custom data
 
 It takes a lot of steps to create the dataset, which you need for running the first and second stage of Neural Haircut. The exact steps are written in: 
-__[Prepare Custom Data](/howto/custom_data.md)__.  
+__[Prepare Custom Data](/custom_dataset/custom_data.md)__.  
 
 It is also helpful to see the structure of the 
 [implicit-hair-data/](https://drive.usercontent.google.com/download?id=1CADXQfC2IgxmFLwcLrm4G3ilWpW1g_PA&authuser=0) folder.  
@@ -157,6 +157,6 @@ It is also helpful to see the structure of the
 
 ## 4. Troubleshoot
 
-**[4 Troubleshoot Guide](/howto/troubleshoot.md)**
+**[4 Troubleshoot Guide](/custom_dataset/troubleshoot.md)**
 
 Think of it like the issue-board, but in clean.

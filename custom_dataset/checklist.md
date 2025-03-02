@@ -1,4 +1,11 @@
+# Checklist
+
+Follow these rough steps to get your dataset and training.
+
+## Dataset Filestructure
+
 ```bash
+
 |-- NeuralHaircut/implicit-hair-data
     |-- data
         |-- h3ds
@@ -33,7 +40,6 @@
                 |-- fitted_cameras.pth # Checkpoint for fitted cameras (optional)
 
 ```
-# Todo
 
 ## Preprocess
 
@@ -59,43 +65,33 @@
 
 7. calculate orientation and confidence maps  
 
-
 8. get initialization_pixie  
-
 
 9. get OpenPose Keypoints  
 
-
 10. fit FLAME head  
-
 
 ## first stage
 
 11. run geometric reconstruction  
 
-
 ## Interprocess
 
 12. copy checkpoints  
 
-
 13. Extract visible hair surface from sdf  
-
 
 14. Remesh hair_outer.ply to ~10k vertex for acceleration  
 
-
 15. Extract scalp region for diffusion using the distance between hair sdf to scalp  
-
 
 ## second stage
 
 16. run strands optimization
-
 
 ## Postprocess
 
 17. make strands from pointcloud
 
 
-# Done
+[go back to overview](/custom_dataset/readme.md)

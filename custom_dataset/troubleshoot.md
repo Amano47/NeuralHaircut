@@ -1,6 +1,6 @@
 # 4. Troubleshoot Guide
 
-Most of the things written here should not have come up, if you followd my [Guide](/howto/), but here are some types of errors I encountered.
+Most of the things written here should not have come up, if you followd my [Guide](/custom_dataset/), but here are some types of errors I encountered.
 
 GL;HF
 

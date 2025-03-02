@@ -14,7 +14,7 @@ To get the files, go through these steps
 
 TL;DR: Windows is the easiest way to install OpenPose for quick use.
 
-__But__: it should be enoguh to install [face-alignment](https://github.com/1adrianb/face-alignment) from 1adrianb in a conda environment, which is already done in the `neuralhaircut`conda environment, which should be done in [step 1](/howto/NeuralHaircut-TUG.md#1-installing) (more on face-alignment in [2 b)](#b-face-alginment).    
+__But__: it should be enoguh to install [face-alignment](https://github.com/1adrianb/face-alignment) from 1adrianb in a conda environment, which is already done in the `neuralhaircut`conda environment, which should be done in [step 1](/custom_dataset/NeuralHaircut-TUG.md#1-installing) (more on face-alignment in [2 b)](#b-face-alginment).    
 
 ### 2. Run script
 

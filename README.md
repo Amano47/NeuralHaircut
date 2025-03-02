@@ -15,9 +15,9 @@ This code helps you to create strand-based hairstyle using multi-view images or 
 
 ## Guide
 
-You can follow the more detailed Step by Step Guide [here](howto/NeuralHaircut-TUG.md)
+You can follow the more detailed Step by Step Guide [here](custom_dataset/NeuralHaircut-TUG.md)
 - it adresses some of the issues users may experience when trying to recreate the test data or to create own hair models.  
-- there is also a checklist for creating custom data [here](howto/checklist.md)
+- there is also a checklist for creating custom data [here](custom_dataset/checklist.md)
 
 ---
 

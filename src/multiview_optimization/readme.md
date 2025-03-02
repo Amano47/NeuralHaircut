@@ -9,7 +9,7 @@ For multiview optimization you need to have the following files ```SMPL-X__FLAME
 Note, that you need to obtain  [PIXIE initialization](https://github.com/yfeng95/PIXIE) for shape, pose parameters and save it as a dict in ```initialization_pixie``` file (see the structure in [example scene](../../example) for convenience). 
 
 **Note**
-Further details on how to get the file: see [the other guide](/howto/custom_data.md#32-pixie-initialization_pixie)  
+Further details on how to get the file: see [the other guide](/custom_dataset/custom_data.md#32-pixie-initialization_pixie)  
 
 ---
 

@@ -245,6 +245,6 @@ The FLAME head is gonna be a `head_prior.obj`, which you can also see in the tes
 
 If you encounter any Problem, look into the open and closed Issues of [NeuralHaircut](https://github.com/SamsungLabs/NeuralHaircut/issues)  
 
-Some of them are also in my [Troubleshoot guide](/howto/troubleshoot.md)
+Some of them are also in my [Troubleshoot guide](/custom_dataset/troubleshoot.md)
 
-### [Back to Overview](/howto/)
+### [Back to Overview](/custom_dataset/)
