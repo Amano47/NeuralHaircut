@@ -23,7 +23,7 @@
 	- create Conda Environment  
 	- download models
 
-3. change the path to them in `src/multiview_optimization/utils/config.py`
+3. change the path `cfg.pixie_dir` in `src/multiview_optimization/utils/config.py`
 
 Set the path to the models to the `/data` folder in the installed PIXIE folder, you just downloaded. There are all Models for Pixie and SMPLX
 
@@ -231,6 +231,13 @@ The FLAME head is gonna be a `head_prior.obj`, which you can also see in the tes
 
 - Only the last call of `fit.py` (which trains on a batch size of 20) uses the second config file, so be sure to match that
 
+**OR**
+
+You can use the fit shell script `fit_script.sh`, which is in the subfolder [multiview_optimization/](src/multiview_optimization/scripts):  
+```bash
+bash scripts/fit_script.sh GPU_ID ../../implicit-hair-data/data/SCENE_TYPE/CASE ./experiments/CASE 
+```
+
 3. run your script
 
 4. get FLAME mesh  
@@ -238,6 +245,18 @@ The FLAME head is gonna be a `head_prior.obj`, which you can also see in the tes
 `experiments/fit_own_data/fit_own_data_bs_20_train_rot_shape/mesh/`  
 - look for the last created mesh and rename it to `head_prior.obj`  
 - copy it to your dataset 
+
+5. cut out the eyes from the FLAME head  
+
+```bash
+python preprocess_custom_data/cut_eyes.py --input ./implicit-hair-data/data/SCENE_TYPE/CASE
+```
+
+If your FLAME head is not normalized (scaled incorrectly and out of position), then you may train it again or force it into normalized form with:  
+
+```bash
+python scripts/cut_eyes_force_norm.py --input ./implicit-hair-data/data/SCENE_TYPE/CASE
+```
 
 ---
 
