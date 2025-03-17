@@ -23,7 +23,7 @@
 	- create Conda Environment  
 	- download models
 
-3. change the path to them in `src/multiview_optimization/utils/config.py`
+3. change the path `cfg.pixie_dir` in `src/multiview_optimization/utils/config.py`
 
 Set the path to the models to the `/data` folder in the installed PIXIE folder, you just downloaded. There are all Models for Pixie and SMPLX
 

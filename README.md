@@ -1,27 +1,33 @@
 # Neural Haircut: Prior-Guided Strand-Based Hair Reconstruction
 
-
-
 [**Paper**](https://arxiv.org/abs/2306.05872) | [**Project Page**](https://samsunglabs.github.io/NeuralHaircut/)
-
-
 
 This repository contains official and **modified** inference code for Neural Haircut.
 
 This code helps you to create strand-based hairstyle using multi-view images or monocular video. 
 
-
-
+Some Python Scripts are modified for increased usability and to correct some of the errors.
 
 ## Guide
 
-You can follow the more detailed Step by Step Guide [here](custom_dataset/NeuralHaircut-TUG.md)
+You can follow the more detailed Step by Step Guide [here](custom_dataset/NeuralHaircut-TUG.md)  
+
 - it adresses some of the issues users may experience when trying to recreate the test data or to create own hair models.  
 - there is also a checklist for creating custom data [here](custom_dataset/checklist.md)
 
+## Additional Documentation
+
+Overview of the docs can be found in `\custom_dataset\readme.md`: [jump](custom_dataset/readme.md)
+
 ---
 
-## Getting started
+**IMPORTANT**
+
+All the code is already modified, as explained in the Troubleshooting guide.
+
+---
+
+<!-- ## Getting started
 
 Clone the repository and install requirements: 
 
@@ -103,7 +109,7 @@ python run_strands_optimization.py --case CASE --scene_type SCENE_TYPE --conf ./
 
 More information can be found in [preprocess_custom_data.](./preprocess_custom_data).
 
-You could run the scripts on our [monocular scene](./example) for convenience. 
+You could run the scripts on our [monocular scene](./example) for convenience.  -->
 
 
 ### License
