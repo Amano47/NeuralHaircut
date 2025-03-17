@@ -156,9 +156,10 @@ def main(args):
     state_dict = model.state_dict().copy()
     state_dict_old = torch.load(args.CDGNET_ckpt, map_location='cpu')
 
-    for key, nkey in zip(state_dict_old.keys(), state_dict.keys()):
+    state_dict_keys = list(state_dict.keys())
+    
+    for key, nkey in zip(state_dict_old.keys(), state_dict_keys):
         if key != nkey:
-            # remove the 'module.' in the 'key'
             state_dict[key[7:]] = deepcopy(state_dict_old[key])
         else:
             state_dict[key] = deepcopy(state_dict_old[key])

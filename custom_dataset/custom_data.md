@@ -141,7 +141,7 @@ This should convert the `.bin` to `.txt`, which is required for:
 4. postprocess Colmap output
 
 ```bash
-python preprocess_custom_data/colmap_parsing.py --path_to_scene  ./implicit-hair-data/data/SCENE_TYPE/CASE --save_path ./implicit-hair-data/data/SCENE_TYPE/CASE/colmap
+python preprocess_custom_data/colmap_parsing.py --input  ./implicit-hair-data/data/SCENE_TYPE/CASE --output ./implicit-hair-data/data/SCENE_TYPE/CASE/colmap
 ```
 
 This generates the folder and files:  
@@ -170,10 +170,10 @@ Export the pointcloud as `point_cloud_cropped.ply` and save it in your `CASE/` d
 ### 3.6 Transform scene into unit sphere
 
 ```bash
-python preprocess_custom_data/scale_scene_into_sphere.py --case CASE --scene_type SCENE_TYPE --path_to_data ./implicit-hair-data/data/
+python preprocess_custom_data/scale_scene_into_sphere.py --input ./implicit-hair-data/data/SCENE_TYPE/CASE
 ```
 
-This should create a file `scale.pickle` in `Case/`
+This should create a file `scale.pickle` in `CASE/`
 
 ### 3.7 OpenPose Keypoint
 
@@ -197,11 +197,32 @@ This should create a file `scale.pickle` in `Case/`
 
 Define views, on which you want to train. Save it into `views.pickle`
 
+This is a file, which contains the camera IDs from COLMAP, to train from a subset of the captured cameras, such as from the front facing cameras.
+
+
 ### 3.9 FLAME head
 
 (see also original doc [multiview optimization](/src/multiview_optimization/))  
 
 The FLAME head is gonna be a `head_prior.obj`, which you can also see in the testdata.
+
+Run the following:  
+```bash
+cd src/multiview_optimization
+
+bash scripts/fit_script.sh <CUDA VISIBLE DEVICE ID> <./path/to/implicit-hair-data/data/SCENE_TPYE/CASE/> <./output_path/>
+```
+- the first argument runs the script on a defined GPU with `CUDA_VISIBLE_DEVICES=$ID`  
+- the second argument should be  
+`../../implicit-hair-data/data/SCENE_TYPE/CASE/`   
+- the third argument can be a symlink path to the data directory  
+
+---
+
+To follow the same steps, but as described in the original repository, do the following:
+
+<details>
+<summary>original way</summary>
 
 1. Config file
 
@@ -215,31 +236,46 @@ The FLAME head is gonna be a `head_prior.obj`, which you can also see in the tes
 - Create a new shell script in `scripts/`  
 - Copy the contents of the given file `scripts/run_monocular_fitting.sh` into the new file and change the config file paths to your own data.
 
-    <details>
-    <summary> fit_armin.sh </summary>
+
 
     ```bash
-    python fit.py --conf confs/train_armin.conf --batch_size 1 --train_rotation True    --save_path ./experiments/fit_armin_bs_1
+    python fit_original.py --conf confs/train_armin.conf --batch_size 1 --train_rotation True    --save_path ./experiments/fit_armin_bs_1
 
-    python fit.py --conf confs/train_armin.conf --batch_size 5 --train_rotation True    --save_path  ./experiments/fit_armin_bs_5 --checkpoint_path ./experiments/fit_armin_bs_1/  opt_params
+    python fit_original.py --conf confs/train_armin.conf --batch_size 5 --train_rotation True    --save_path  ./experiments/fit_armin_bs_5 --checkpoint_path ./experiments/fit_armin_bs_1/  opt_params
 
-    python fit.py --conf confs/train_armin_2.conf --batch_size 20 --train_rotation True     --train_shape True --save_path  ./experiments/fit_armin_bs_20_train_rot_shape   --checkpoint_path ./experiments/fit_armin_bs_5/opt_params
+    python fit_original.py --conf confs/train_armin_2.conf --batch_size 20 --train_rotation True     --train_shape True --save_path  ./experiments/fit_armin_bs_20_train_rot_shape   --checkpoint_path ./experiments/fit_armin_bs_5/opt_params
     ```
 
-    </details>  
 <br> 
 
-- Only the last call of `fit.py` (which trains on a batch size of 20) uses the second config file, so be sure to match that
+- Only the last call of `fit_original.py` (which trains on a batch size of 20) uses the second config file, so be sure to match that
 
 3. run your script
 
-4. get FLAME mesh  
+</details>
+
+<br>  
+
 - after the script has finished, go to  
 `experiments/fit_own_data/fit_own_data_bs_20_train_rot_shape/mesh/`  
 - look for the last created mesh and rename it to `head_prior.obj`  
 - copy it to your dataset 
 
----
+
+### 3.10 Cut out the eyes
+
+Cut out the eyes from the fitted FLAME Head with:  
+```bash
+pytho preprocess_custom_data/cut_eyes.py --input ./implicit-hair-data/data/SCENE_TYPE/CASE/
+```
+The python code looks out for the file `head_prior.obj`, so be sure to rename the fitted FLAME head accordingly.
+
+## Preprocess finished
+
+Now you have finished all steps to process your own dataset for the first stage.
+
+If you encounter any troubles, look in the next section.
+
 
 ## Troubleshoot 
 

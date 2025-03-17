@@ -40,7 +40,8 @@ The full data folder is organized as follows:
 
 ### For the first stage you need the following:
 
-
+Step 1 to 3 is marked as optional. If you use h3ds models, or other reconstructions of your Data, then you only need to obtain the camera intrinsics and extrinsics and a pointcloud of your avatar.
+If you are using your own recordings, it is recommended to follow 1-3.
 
 #### Step 1. (Optional) Run [COLMAP SfM](https://colmap.github.io/) to obtain cameras. 
 
@@ -53,13 +54,19 @@ colmap automatic_reconstructor --workspace_path  CASE_NAME/colmap  --image_path 
 ```bash
 mkdir CASE_NAME/colmap/sparse_txt && colmap model_converter --input_path CASE_NAME/colmap/sparse/0  --output_path CASE_NAME/colmap/sparse_txt --output_type TXT
 ```
+**Note:**
 
+If your reconstruction did not detect all cameras, then remove the images, which did not get recognized from your image folder.  
+- compare image IDs from `images.txt` from colmap/sparse  
+- remove the images, where the ID is missing in `images.txt`
+
+If you created the mask before the COLMAP reconstruction, then remove the masks with the missing IDs as well.
 
 
 ##### To postprocess COLMAP's output run:
 
 ```bash
-python colmap_parsing.py --path_to_scene  ./implicit-hair-data/data/SCENE_TYPE/CASE/colmap --save_path ./implicit-hair-data/data/SCENE_TYPE/CASE/colmap
+python colmap_parsing.py --input  ./implicit-hair-data/data/SCENE_TYPE/CASE/colmap --output ./implicit-hair-data/data/SCENE_TYPE/CASE/colmap
 ```
 ##### Obtain:
 
@@ -74,14 +81,14 @@ Obtained ```colmap/point_cloud.ply``` is very noisy, so we are additionally defi
 #### Step 3. Transform cropped scene to lie in a unit sphere volume.
 
 ```bash
-python preprocess_custom_data/scale_scene_into_sphere.py --case CASE --scene_type SCENE_TYPE --path_to_data ./implicit-hair-data/data/
+python preprocess_custom_data/scale_scene_into_sphere.py --input ./implicit-hair-data/data/SCENE_TYPE/CASE
 ```
-After this step in```./implicit-hair-data/data/SCENE_TYPE/CASE``` you would obtain ```scale.pickle```.
+After this step in```./implicit-hair-data/data/SCENE_TYPE/CASE``` you would obtain `scale.pickle`.
 
 
-#### Step 4. (Optional) Crop input images and postprocess cameras. 
+#### Step 4. Crop input images and postprocess cameras. 
 
-Note, now NeuralHaircut supports only the square images.
+Note, now NeuralHaircut supports only the square images.  
 
 #### Step 5. Obtain hair, silhouette masks and orientation and confidence maps.
 
@@ -92,7 +99,7 @@ python preprocess_custom_data/calc_masks.py --scene_path ./implicit-hair-data/da
 
 
 ```bash
-python preprocess_custom_data/calc_orientation_maps.py --img_path ./implicit-hair-data/data/SCENE_TYPE/CASE/image/ --orient_dir ./implicit-hair-data/data/SCENE_TYPE/CASE/orientation_maps --conf_dir ./implicit-hair-data/data/SCENE_TYPE/CASE/confidence_maps
+python preprocess_custom_data/calc_orientation_maps.py --input ./implicit-hair-data/data/SCENE_TYPE/CASE/ --output ./implicit-hair-data/data/SCENE_TYPE/CASE/
 ```
 
 After this step in```./implicit-hair-data/data/SCENE_TYPE/CASE``` you would obtain ```hair_mask, mask, confidence_maps, orientation_maps```.
@@ -113,11 +120,12 @@ More details could be find in [multiview_optimization](../src/multiview_optimiza
 Could use MeshLab or run the following with predefined eyes faces.
 
 ```bash
-python  ./preprocess_custom_data/cut_eyes.py --case CASE --scene_type SCENE_TYPE --path_to_data ./implicit-hair-data/data/
+python  ./preprocess_custom_data/cut_eyes.py --input ./implicit-hair-data/data/SCENE_TYPE/CASE
 ```
 
 After this step in```./implicit-hair-data/data/SCENE_TYPE/CASE``` you would obtain ```head_prior_wo_eyes.obj```.
 
+---
 
 ### For the second stage you need the following:
 

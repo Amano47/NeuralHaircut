@@ -76,7 +76,7 @@ Put it into `/CDGNet/snapshots/` and the code should be fine.
 
 
 
-## 4.4 Masks python code
+## 4.4 Masks python code (solution already implemented)
 
 Another issue with the mask generator is, that it seems to have problems with the code itself in [line 159](https://github.com/Amano47/NeuralHaircut/blob/1dbdd07797458e6e0000bd3a02f3092d419d1756/preprocess_custom_data/calc_masks.py#L159).
 
@@ -119,6 +119,10 @@ Import your point cloud (point_cloud.ply, created by the colmap parser code) and
 The Support Page has some Tutorials for how to use MeshLab: [here](https://www.meshlab.net/#support)  
 
 ## 4.7 OpenPose
+
+For OpenPose, you need Ubuntu 20.04 or earlier, as Caffe is not compiled for later versions.  
+On Windows, you can download the pre-compiled Executable in the releases section.  
+- look for CUDA prequisites in the [Windows Portable Demos section](https://github.com/CMU-Perceptual-Computing-Lab/openpose/blob/master/doc/installation/0_index.md#windows-portable-demo)
 
 - For fitting the FLAME model, you should get OpenPose keypoints or FaceAlignment Keypoints and save them as json files in a subfolder `openpose_kp`
 - There should be one json file for each image you use   

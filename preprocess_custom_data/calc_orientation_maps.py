@@ -33,7 +33,7 @@ def calc_orients(img, kernels):
     return F_orients
 
 
-def calc_confidences(F_orients, orientation_map):
+def calc_confidences(F_orients, orientation_map, num_filters):
     orients_bins = np.linspace(0, math.pi * (num_filters - 1) / num_filters, num_filters)
     orients_bins = orients_bins[:, None, None]
     
@@ -49,21 +49,45 @@ def calc_confidences(F_orients, orientation_map):
     
     return V_F
 
-def main(args):
 
-    os.makedirs(args.orient_dir, exist_ok=True)
-    os.makedirs(args.conf_dir, exist_ok=True)
+def main(args):
+    
+    if args.input is None:
+        print('IllegalArgumentException: No input data')
+        return 0
+    else:
+        img_path = os.path.join(args.input, 'image')
+        
+    if args.output is None:
+        print(f'Files are saved in Input dir: {args.input}')
+        
+        orient_dir = os.path.join(args.input, 'orientation_maps')
+        conf_dir = os.path.join(args.input, 'confidence_maps')
+    else:
+        print(f'Files are saved in {args.output}orientation_maps and /confidence_maps')
+        
+        orient_dir = os.path.join(args.output, 'orientation_maps')
+        conf_dir = os.path.join(args.output, 'confidence_maps')
+
+    os.makedirs(orient_dir, exist_ok=True)
+    os.makedirs(conf_dir, exist_ok=True)
+    
+    print(f'Images located in {img_path}')
+
+    
+    num_filters = args.num_filters
     
     kernels = generate_gabor_filters(args.sigma_x, args.sigma_y, args.freq, args.num_filters)
     
     img_list = sorted(os.listdir(img_path))
+    
     for img_name in tqdm.tqdm(img_list):
         basename = img_name.split('.')[0]
         img = np.array(Image.open(os.path.join(img_path, img_name)))
         F_orients = calc_orients(img, kernels)
         orientation_map = F_orients.argmax(0)
         orientation_map_rad = orientation_map.astype('float16') / num_filters * math.pi
-        confidence_map = calc_confidences(F_orients, orientation_map_rad)
+        confidence_map = calc_confidences(F_orients, orientation_map_rad, num_filters)
 
         cv2.imwrite(f'{orient_dir}/{basename}.png', orientation_map.astype('uint8'))
         np.save(f'{conf_dir}/{basename}.npy', confidence_map.astype('float16'))
@@ -73,9 +97,9 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(conflict_handler='resolve')
 
-    parser.add_argument('--img_path', default='./implicit-hair-data/data/h3ds/00141/image/', type=str)
-    parser.add_argument('--orient_dir', default='./implicit-hair-data/data/h3ds/00141/orientation_maps/', type=str)
-    parser.add_argument('--conf_dir', default='./implicit-hair-data/data/h3ds/00141/confidence_maps/', type=str)
+    parser.add_argument('--input', type=str, default=None, help='dir, where your images are. The calculated maps are saved in a subdir')
+    parser.add_argument('--output', type=str, default=None, help='Output directory, where stuff gets saved. If no output dir is set, it gets saved in the input folder' )
+    
     parser.add_argument('--sigma_x', default=1.8, type=float)
     parser.add_argument('--sigma_y', default=2.4, type=float)
     parser.add_argument('--freq', default=0.23, type=float)
@@ -83,5 +107,7 @@ if __name__ == "__main__":
 
     args, _ = parser.parse_known_args()
     args = parser.parse_args()
+    
+    # print(f'DEBUG: orient_dir, conf_dir: {args.output}')
 
     main(args)

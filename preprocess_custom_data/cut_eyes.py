@@ -2,10 +2,15 @@ import pytorch3d
 import os
 from pytorch3d.io import load_obj, save_obj
 import torch
+import argparse
 
 def main(args):
+        
+    if args.input is None:
+        print('No FLAME head given. Needs head_prior.obj to work')
+        return -1
     
-    path_to_scene = os.path.join(args.path_to_data, args.scene_type, args.case)
+    path_to_scene = args.input
     
     verts, faces, _ =  load_obj(os.path.join(path_to_scene, 'head_prior.obj'))
     idx_wo_eyes, faces_wo_eyes = torch.load('./data/idx_wo_eyes.pt'), torch.load('./data/faces_wo_eyes.pt')
@@ -14,14 +19,9 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(conflict_handler='resolve')
-
-    parser.add_argument('--case', default='person_1', type=str)
-    parser.add_argument('--scene_type', default='monocular', type=str)
-    
-    parser.add_argument('--path_to_data', default='./implicit-hair-data/data/', type=str) 
-
+    parser.add_argument('--input', type=str, default=None, help='path to head_prior.obj')
     
     args, _ = parser.parse_known_args()
     args = parser.parse_args()
-
+    
     main(args)

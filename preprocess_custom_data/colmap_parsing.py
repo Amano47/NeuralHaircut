@@ -11,16 +11,16 @@ from scipy.spatial.transform import Rotation as R
     
 def main(args):
     
-    images_file = f'{args.path_to_scene}/sparse_txt/images.txt'
-    points_file = f'{args.path_to_scene}/sparse_txt/points3D.txt'
-    camera_file = f'{args.path_to_scene}/sparse_txt/cameras.txt'
+    images_file = f'{args.input}/colmap/sparse_txt/images.txt'
+    points_file = f'{args.input}/colmap/sparse_txt/points3D.txt'
+    camera_file = f'{args.input}/colmap/sparse_txt/cameras.txt'
     
     # Parse colmap cameras and used images
     with open(camera_file) as f:
         lines = f.readlines()
 
         u = float(lines[3].split()[4])
-        h, w = [int(x) for x in lines[3].split()[5: 7]]
+        h, w = [round(float(x)) for x in lines[3].split()[5: 7]]
 
         intrinsic_matrix = np.array([
             [u, 0, h, 0],
@@ -70,33 +70,48 @@ def main(args):
         points.append(point)
         colors.append(color)
 
+    # print(points)
+
+    if len(points) == 0 and len(colors) == 0:
+        print("points3D.txt is empty")
+        points.append(0)
+        colors.append(0)
+    
     points = np.stack(points)
     colors = np.stack(colors)
     
-    output_folder = args.save_path
-    images_folder = os.path.join(args.path_to_scene, 'video_frames')
+    output_folder = args.output
+    images_folder = os.path.join(args.input, 'image') # modified from video_frames/  to image/
     
     os.makedirs(output_folder, exist_ok=True)
     os.makedirs(os.path.join(output_folder, 'full_res_image'), exist_ok=True)
     
     cameras = []
     debug = False
+    
+    i = 0
 
     for i, k in enumerate(data.keys()):
-        filename = f'img_{i:04}.png'
+        
+        if not os.path.exists(os.path.join(images_folder, k)):
+            print(f'Warning: File {k} not found. Skipping')
+            continue
+        
+        filename = f'img_{i:04}.png'     
+        
         T = data[k]
         cameras.append(T)
         shutil.copyfile(os.path.join(images_folder, k), os.path.join(output_folder, 'full_res_image', filename))
 
     np.savez(os.path.join(output_folder, 'cameras.npz'), np.stack(cameras))
-    trimesh.points.PointCloud(points).export(os.path.join(output_folder, 'point_cloud.ply'));
+    trimesh.points.PointCloud(points).export(os.path.join(output_folder, 'point_cloud.ply'))
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(conflict_handler='resolve')
 
-    parser.add_argument('--path_to_scene', default='./implicit-hair-data/data/monocular/person_1', type=str)
-    parser.add_argument('--save_path', default='./implicit-hair-data/data/monocular/person_1/colmap', type=str)
+    parser.add_argument('--input', default='./implicit-hair-data/data/monocular/person_1', type=str, help='path to /SCENE_TYPE/CASE/')
+    parser.add_argument('--output', default='./implicit-hair-data/data/monocular/person_1/colmap', type=str, help='path to colmap directory in CASE')
 
     
     args, _ = parser.parse_known_args()
