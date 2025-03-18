@@ -134,6 +134,8 @@ python scripts/points2strands.py --input hair_300000.ply --output .
 ```
 
 It should connect the sturctured points into sets of lines, although the strand coluors are lost.
+
+Each Strand in the pointcloud is assigned a RGBA value, such that every Point on the strand is colored with this RGBA value.
  
 ## 3. Preprocess custom data
 
