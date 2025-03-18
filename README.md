@@ -2,28 +2,33 @@
 
 [**Paper**](https://arxiv.org/abs/2306.05872) | [**Project Page**](https://samsunglabs.github.io/NeuralHaircut/)
 
-This repository contains official and **modified** inference code for Neural Haircut.
+This repository contains official and **modified** code for Neural Haircut.  
+Some minor adjustments were made to the documentation and the preprocess code.
 
 This code helps you to create strand-based hairstyle using multi-view images or monocular video. 
 
-Some Python Scripts are modified for increased usability and to correct some of the errors.
 
 ## Guide
 
-You can follow the Step by Step Guide [here](custom_dataset/NeuralHaircut-TUG.md)  
+You can follow the Step by Step Guide  
+
+[custom_dataset/NeuralHaircut-TUG.md](custom_dataset/NeuralHaircut-TUG.md)  
 
 - it adresses some of the issues users may experience when trying to recreate the test data or to create own hair models.  
-- there is also a checklist for creating custom data [here](custom_dataset/checklist.md)
 
-## Additional Documentation
+- a checklist for creating custom data can be also found in the custom_data/ folder [here](custom_dataset/checklist.md)
+
+### Additional Documentation
 
 Overview of the docs can be found in `\custom_dataset\readme.md`: [jump](custom_dataset/readme.md)
 
----
+## Hardware Requirements
 
-**IMPORTANT**
+Currently, Neural Haircut runs only on Linux with Nvidia GPUs (CUDA required).  
+A Nvidia RTX 4090 is recommended.
 
-All the code is already modified, as explained in the Troubleshooting guide.
+A minimum of 170GB of Diskspace is required for a complete reconstruction.  
+200GiBor more are recommended.
 
 ---
 
