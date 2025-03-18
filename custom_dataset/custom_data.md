@@ -35,15 +35,15 @@ Set the path to the models to the `/data` folder in the installed PIXIE folder, 
 
 A **simple solution** is implemented by User [@ypan98](https://github.com/ypan98) in his fork of PIXIE, called [pixie_initialization.py](https://github.com/ypan98/PIXIE/blob/master/demos/pixie_initialization.py).
 
-- go to his fork and download the file  
+A Copy is in the scripts folder
 
 run it with:
 
 ```bash
-python demos/pixie_initialization.py --input_path /path/to/your/image/folder --save_folder /TestSamples/face/CASE/
+python scripts/pixie_initialization.py --input_path /path/to/your/image/folder --save_folder /TestSamples/face/CASE/
 ```
 
-Add the following args to get more results:  
+Add the following args to get visualized results:  
 - `--showBody True` 
 - `--saveImages True`  
 - `--saveObj True`  
@@ -63,7 +63,7 @@ To generate silhouettes, we use [MODNet](/MODNet/) and for hair masks [CDGNet](/
 2. Download CDGNet Model
 
     CDGNet : ~~[official link](https://github.com/tjpulkl/CDGNet/blob/9daf7ddee6045c151c90a2e300946ea5f5717591/README.md?plain=1#L22)~~ which is **outdated** | Download `LIP_epoch_149.pth` (the file has to be ~305 MB in size)  
-    **[OneDrive Link](https://onedrive.live.com/?redeem=aHR0cHM6Ly8xZHJ2Lm1zL2YvcyFBaGZRbUVIelk1NFlhMmdHYXNsWG5NMklQQ2s%5FZT1waGs1bWU&id=189E63F34198D017%21131&cid=189E63F34198D017)** from [Monohair](https://github.com/KeyuWu-CS/MonoHair)    
+    alternative **[OneDrive Link](https://onedrive.live.com/?redeem=aHR0cHM6Ly8xZHJ2Lm1zL2YvcyFBaGZRbUVIelk1NFlhMmdHYXNsWG5NMklQQ2s%5FZT1waGs1bWU&id=189E63F34198D017%21131&cid=189E63F34198D017)** from [Monohair](https://github.com/KeyuWu-CS/MonoHair)    
 
     __Save__ the file in `/CDGNet/snapshots/` (create the directory)  
 
@@ -86,14 +86,14 @@ You now should have the subfolders `masks/` and `hair_masks/` under `CASE/` with
 Calculate orientation maps and confidence maps with
 
 ```bash
-python preprocess_custom_data/calc_orientation_maps.py --img_path ./implicit-hair-data/data/SCENE_TYPE/CASE/image --orient_dir ./implicit-hair-data/data/SCENE_TYPE/CASE/orientation_maps --conf_dir ./implicit-hair-data/data/SCENE_TYPE/CASE/confidence_maps
+python preprocess_custom_data/calc_orientation_maps.py --input ./implicit-hair-data/data/SCENE_TYPE/CASE/image --output ./implicit-hair-data/data/SCENE_TYPE/CASE/ 
 ```
 
 This should create the subdirectories `orientation_maps/` and `confidence_maps/` with the data. This also takes a while.
 
 ### 3.5 Colmap/Meshlab
 
-The original document states, that this step is optional, but the files seem to be required in some stages afterwards.
+If you are not using H3DS reconstructions of your data, then follow these steps.
 
 #### (i) COLMAP
 
@@ -112,10 +112,8 @@ conda activate colmap
     run the automatic reconstructor from the terminal with
 
 ```bash
-colmap automatic_reconstructor --workspace_path ./implicit-hair-data/SCENE_TYPE/CASE/colmap --image_path ./implicit-hair-data/SCENE_TYPE/CASE/image
+colmap automatic_reconstructor --workspace_path ./implicit-hair-data/SCENE_TYPE/CASE/colmap --image_path ./implicit-hair-data/SCENE_TYPE/CASE/image --dense 0
 ```
-
-This runs for ~1.5 hours (depending on image quality and quantitiy).
 
 It should run fine with normal video frames, but in case colmap can't identify camera positions and features, give colmap the masks you created earlier, by simply adding the path with: 
 
@@ -131,9 +129,11 @@ It should run fine with normal video frames, but in case colmap can't identify c
 Convert the three files with  
 
 ```bash
-mkdir CASE_NAME/colmap/sparse_txt 
+cd ./implicit-hair-data/data/SCENE_TYPE/CASE/
 
-colmap model_converter --input_path CASE_NAME/colmap/sparse/0  --output_path CASE_NAME/colmap/sparse_txt --output_type TXT
+mkdir colmap/sparse_txt 
+
+colmap model_converter --input_path colmap/sparse/0  --output_path colmap/sparse_txt --output_type TXT
 ```
 
 This should convert the `.bin` to `.txt`, which is required for:
@@ -170,6 +170,8 @@ Export the pointcloud as `point_cloud_cropped.ply` and save it in your `CASE/` d
 ### 3.6 Transform scene into unit sphere
 
 ```bash
+cd ~/NeuralHaircut
+
 python preprocess_custom_data/scale_scene_into_sphere.py --input ./implicit-hair-data/data/SCENE_TYPE/CASE
 ```
 
@@ -197,7 +199,7 @@ This should create a file `scale.pickle` in `CASE/`
 
 Define views, on which you want to train. Save it into `views.pickle`
 
-This is a file, which contains the camera IDs from COLMAP, to train from a subset of the captured cameras, such as from the front facing cameras.
+This is a file, which contains the camera IDs from COLMAP, to train from a subset of the captured cameras, such as from the front facing ones.
 
 
 ### 3.9 FLAME head
@@ -210,7 +212,7 @@ Run the following:
 ```bash
 cd src/multiview_optimization
 
-bash scripts/fit_script.sh <CUDA VISIBLE DEVICE ID> <./path/to/implicit-hair-data/data/SCENE_TPYE/CASE/> <./output_path/>
+bash scripts/fit_script.sh <GPU ID> <./path/to/implicit-hair-data/data/SCENE_TPYE/CASE/> <./output_path/>
 ```
 - the first argument runs the script on a defined GPU with `CUDA_VISIBLE_DEVICES=$ID`  
 - the second argument should be  

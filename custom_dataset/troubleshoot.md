@@ -147,7 +147,10 @@ If you encounter errors with when fitting the FLAME head with `fit.py`, then the
 
 ### 4.8.1 file path error
 
-The `fit.py` code assumes, that you have every file in
+The `fit_original.py` code assumes, that you have every file in your dataset ready, but the file `fitted_cameras.pth` is not generated before the first stage.  
+This means, that this file can not be aquired in the preprocess of the dataset.  
+
+The current code `fit.py` replaces the original code and correctly implements the argument parser to use this optional file, only if the path is given.
 
 ### 4.8.2 image numbers
 
@@ -166,5 +169,7 @@ The script in this repository `fit_script.sh` is using the modified code, which 
 
 ## 4.9 Geometric Reconstruction
 
-There are rather strage occurences when training the geometric reconstructor.  
+<!-- There are rather strage occurences when training the geometric reconstructor.   -->
 If you have problems with NaN occuring in the orientation_fine Loss calculation, like when the raygenerator creates NaN in data, then the dataset was not good.
+
+If the reconstructed Mesh after ~10000 Iterations is not looking anything similar like the person you are reconstructing, then the 

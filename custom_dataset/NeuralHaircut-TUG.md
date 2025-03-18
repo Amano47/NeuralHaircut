@@ -83,8 +83,7 @@ Save the folder in the rootfolder of NeuralHaircut like
 - testdata explained in [/example](/example/)   
 or    
 - [custom data](#3-preprocess-custom-data)  
-or  
-- h3ds data  
+
 
 **Caution:**
 - geometric reconstruction (first stage) takes 1 day on a Nvidia 4090  
